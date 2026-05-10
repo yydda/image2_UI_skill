@@ -11,10 +11,20 @@
 
 ## 快速开始
 
-| 参考图 | 复刻预览 |
-| --- | --- |
-| ![参考图](./assets/cover-reference.png) | [![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4) |
-| 原始参考图 | [点击查看原视频](./assets/demo.mp4) |
+<table>
+  <tr>
+    <th>参考图</th>
+    <th>复刻预览</th>
+  </tr>
+  <tr>
+    <td><img src="./assets/cover-reference.png" alt="参考图" width="520"></td>
+    <td><a href="./assets/demo.mp4"><img src="./assets/demo-preview.gif" alt="复刻演示视频预览" width="280"></a></td>
+  </tr>
+  <tr>
+    <td>原始参考图</td>
+    <td><a href="./assets/demo.mp4">点击查看原视频</a></td>
+  </tr>
+</table>
 
 直接安装：
 
