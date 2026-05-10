@@ -5,6 +5,54 @@
 - 可用代码实现的结构化 UI
 - 需要真实生成的 `image2` 位图资产
 
+适合把“参考图 -> 分析 -> 生图 -> 接回页面”这条链路直接跑通。
+
+## 快速开始
+
+先看演示视频：
+
+- 抖音教程： [不会设计不会代码，AI 帮我搞定全套 APP](https://v.douyin.com/MJLektzxKpM/)
+
+直接安装：
+
+```powershell
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image2_UI_skill"
+```
+
+安装后，重开 Codex 或新开一个会话。
+
+直接复制这段开始用：
+
+```text
+使用 image-to-ui-skill。
+我会上传一张 UI 参考图，请你把它做成一个可以直接预览和点击的前端 demo。
+
+要求：
+1. 先自动分析哪些部分应该用代码实现，哪些部分必须真实调用 image2 生图
+2. 不要把按钮文字、标题、价格、正文做进图片里
+3. 需要真实生成的位图资产，请实际生成并接回页面
+4. 如果没有真实生成位图并接入页面，不要告诉我已经用了 image2
+5. 最后输出可运行结果，并告诉我生成了哪些图片、图片放在哪、哪些区域还是代码实现
+
+技术栈：
+- 先用 HTML/CSS/JS 即可
+
+直接开始，不用先问我。
+```
+
+原始分享文案：
+
+```text
+8.28 o@D.uS goQ:/ 07/22 :0pm 不会设计不会代码❗AI 帮我搞定全套 APP 不会 UI、不会设计、不会写代码 一直想做一款自己的 APP # vibecoding # ai # image2 # codex # 设计  https://v.douyin.com/MJLektzxKpM/ 复制此链接，打开Dou音搜索，直接观看视频！
+```
+
+适合这类人：
+
+- 不会设计，但有参考图
+- 不会写前端，但想先做出可预览 demo
+- 不想再让模型只写“结构差不多”的页面
+- 希望明确区分“该用代码实现”和“必须真实生图”的部分
+
 ## 实现什么功能
 
 这个 skill 主要用来做 4 件事：
@@ -30,21 +78,51 @@
 
 ## 如何安装
 
-把仓库放到 Codex 的 skills 目录，并保持文件夹名与 `SKILL.md` 里的 `name` 一致。
+把仓库放到 Codex 的 skills 目录里即可。
 
-Windows:
+Windows 推荐：
 
 ```powershell
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image-to-ui-skill"
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image2_UI_skill"
+```
+
+如果你已经有这个目录，先进入目录再执行：
+
+```powershell
+git -C "$env:USERPROFILE\.codex\skills\image2_UI_skill" pull
 ```
 
 macOS / Linux:
 
 ```bash
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image-to-ui-skill"
+git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image2_UI_skill"
 ```
 
 安装后重新打开 Codex，或新开一个会话再使用。
+
+## 怎么判断该不该用这个 skill
+
+下面这些情况，直接用：
+
+- 你手上有一张 App 截图、网页截图、设计稿，想快速做成前端页面
+- 你想让 AI 自动判断哪些元素该用代码写，哪些元素该生成图片
+- 你需要主视觉、插画、卡片图、纹理图、抠图等真实位图资产
+- 你要做“高保真参考图还原”，不接受纯 CSS 假装已经生图
+
+下面这些情况，不一定要用它：
+
+- 你只是想搭一个普通后台表单页
+- 页面基本没有复杂视觉资产
+- 你已经有完整设计系统和全部素材，只差常规前端实现
+
+## 推荐用法
+
+最稳的方式不是一句“帮我做个页面”，而是把这 4 个信息一次说清楚：
+
+1. 你给它什么参考
+2. 你想输出什么技术栈
+3. 你是否要求真实调用 `image2`
+4. 你是要“先分析”还是“直接开做”
 
 ## 如何使用
 
@@ -74,3 +152,63 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 ```text
 如果没有真实生成位图并接入页面，不要告诉我已经用了 image2。
 ```
+
+## 一套更适合新手直接复制的提示词
+
+如果你完全不会设计、不会代码，直接用这段通常最省事：
+
+```text
+使用 image-to-ui-skill。
+我会上传一张 UI 参考图，请你把它做成一个可以直接预览和点击的前端 demo。
+
+要求：
+1. 先自动分析哪些部分应该用代码实现，哪些部分必须真实调用 image2 生图
+2. 不要把按钮文字、标题、价格、正文做进图片里
+3. 需要真实生成的位图资产，请实际生成并接回页面
+4. 如果没有真实生成位图并接入页面，不要告诉我已经用了 image2
+5. 最后输出可运行结果，并告诉我生成了哪些图片、图片放在哪、哪些区域还是代码实现
+
+技术栈：
+- 先用 HTML/CSS/JS 即可
+
+直接开始，不用先问我。
+```
+
+如果你是做 App 首屏、品牌页、落地页，这段也很好用：
+
+```text
+使用 image-to-ui-skill，参考我上传的图，做高保真还原。
+优先保证首屏主视觉、插画、缩略图和背景纹理质量。
+请明确区分：
+1. 必须真实 image2 生图的部分
+2. 建议生图的部分
+3. 保持代码实现的部分
+完成后给我一个可点击预览版本。
+```
+
+## 推荐工作流
+
+1. 上传参考图
+2. 让 skill 先做拆解
+3. 确认哪些地方必须生图
+4. 生成图片资产并接回页面
+5. 截图验收，检查它是不是真的用了 `image2`
+
+如果你时间紧，也可以直接跳过第 2 步，让它“直接开始，不用先问我”。
+
+## 验收时重点看什么
+
+跑完以后，不要只看“像不像”，还要看这几件事：
+
+1. 页面里的标题、按钮、正文是不是仍然是可选中的真实文字
+2. 主视觉、插画、缩略图是不是已经替换成真实生成的图片
+3. 最终说明里有没有列出生成图片的路径
+4. 页面是否可以正常点击和预览
+5. 模型有没有把“代码近似”误说成“已经生图完成”
+
+## 常见一句话需求模板
+
+- 做首页：`使用 image-to-ui-skill，参考这张首页图直接做成可点击 demo，并真实调用 image2 处理主视觉和卡片图。`
+- 先分析：`使用 image-to-ui-skill，先只做拆解，不写代码，输出代码实现区、必须生图区和资产清单。`
+- 做高保真：`使用 image-to-ui-skill，这次不要只做 CSS 近似，必须真实生图并接回页面。`
+- 做 React：`使用 image-to-ui-skill，输出 React 版本，保留文本可编辑，复杂视觉区域真实调用 image2。`
