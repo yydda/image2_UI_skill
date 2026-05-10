@@ -1,5 +1,7 @@
 # Image2 to UI Skill  图片转UI界面
 
+基于 Codex 适配的图片转 UI 界面 skill。
+
 把 UI 截图、设计稿、页面参考图转换成：
 
 - 可用代码实现的结构化 UI
