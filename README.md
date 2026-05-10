@@ -9,10 +9,10 @@
 
 ## 快速开始
 
-| 复刻预览 | 参考图 |
+| 参考图 | 复刻预览 |
 | --- | --- |
-| [![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4) | ![参考图](./assets/cover-reference.png) |
-| [点击查看原视频](./assets/demo.mp4) | 原始参考图 |
+| ![参考图](./assets/cover-reference.png) | [![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4) |
+| 原始参考图 | [点击查看原视频](./assets/demo.mp4) |
 
 直接安装：
 
