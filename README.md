@@ -7,6 +7,8 @@
 
 适合把“参考图 -> 分析 -> 生图 -> 接回页面”这条链路直接跑通。
 
+[教程演示文档](https://v.douyin.com/MJLektzxKpM/)
+
 ## 快速开始
 
 | 参考图 | 复刻预览 |
@@ -39,12 +41,6 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.
 - 先用 HTML/CSS/JS 即可
 
 直接开始，不用先问我。
-```
-
-原始分享文案：
-
-```text
-8.28 o@D.uS goQ:/ 07/22 :0pm 不会设计不会代码❗AI 帮我搞定全套 APP 不会 UI、不会设计、不会写代码 一直想做一款自己的 APP # vibecoding # ai # image2 # codex # 设计  https://v.douyin.com/MJLektzxKpM/ 复制此链接，打开Dou音搜索，直接观看视频！
 ```
 
 适合这类人：
