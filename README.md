@@ -83,30 +83,6 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.
 - 导航、表单、列表、标签
 - 需要保持可访问和可交互的真实 UI
 
-## 如何安装
-
-把仓库放到 Codex 的 skills 目录里即可。
-
-Windows 推荐：
-
-```powershell
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image2_UI_skill"
-```
-
-如果你已经有这个目录，先进入目录再执行：
-
-```powershell
-git -C "$env:USERPROFILE\.codex\skills\image2_UI_skill" pull
-```
-
-macOS / Linux:
-
-```bash
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image2_UI_skill"
-```
-
-安装后重新打开 Codex，或新开一个会话再使用。
-
 ## 怎么判断该不该用这个 skill
 
 下面这些情况，直接用：
