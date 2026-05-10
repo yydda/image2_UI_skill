@@ -28,6 +28,81 @@
   </tr>
 </table>
 
+## 仓库案例素材
+
+下面这些参考图和原视频已经直接放进仓库里，打开 GitHub 页面就能点开看。
+
+### 博物馆 App
+
+<table>
+  <tr>
+    <th>参考图</th>
+    <th>复刻预览</th>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/museum-app/reference-overview.png"><img src="./assets/cases/museum-app/reference-overview.png" alt="博物馆 App 参考图" width="520"></a></td>
+    <td><a href="./assets/cases/museum-app/museum-app-demo.mp4"><img src="./assets/cases/museum-app/home-screen.png" alt="博物馆 App 预览" width="280"></a></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/museum-app/reference-overview.png">原始参考图</a></td>
+    <td><a href="./assets/cases/museum-app/museum-app-demo.mp4">点击查看原视频</a></td>
+  </tr>
+</table>
+
+更多预览：
+
+- [首页](./assets/cases/museum-app/home-screen.png)
+- [展览列表](./assets/cases/museum-app/exhibitions-screen.png)
+- [作品详情](./assets/cases/museum-app/detail-screen.png)
+- [案例拆解](./references/museum-app-case-study.md)
+
+### 女装购物 App
+
+<table>
+  <tr>
+    <th>参考图</th>
+    <th>复刻预览</th>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/fashion-shopping-app/reference-overview.png"><img src="./assets/cases/fashion-shopping-app/reference-overview.png" alt="女装购物 App 参考图" width="520"></a></td>
+    <td><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4"><img src="./assets/cases/fashion-shopping-app/hero-screen.png" alt="女装购物 App 预览" width="280"></a></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/fashion-shopping-app/reference-overview.png">原始参考图</a></td>
+    <td><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4">点击查看原视频</a></td>
+  </tr>
+</table>
+
+更多预览：
+
+- [主视觉屏](./assets/cases/fashion-shopping-app/hero-screen.png)
+- [商品首页](./assets/cases/fashion-shopping-app/catalog-screen.png)
+- [收藏页](./assets/cases/fashion-shopping-app/favorites-screen.png)
+- [案例拆解](./references/fashion-shopping-app-case-study.md)
+
+### 新闻阅读 App
+
+<table>
+  <tr>
+    <th>参考图</th>
+    <th>复刻预览</th>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/news-app/reference-overview.png"><img src="./assets/cases/news-app/reference-overview.png" alt="新闻阅读 App 参考图" width="520"></a></td>
+    <td><a href="./assets/cases/news-app/news-app-demo.mp4"><img src="./assets/cases/news-app/feed-screen.png" alt="新闻阅读 App 预览" width="280"></a></td>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/news-app/reference-overview.png">原始参考图</a></td>
+    <td><a href="./assets/cases/news-app/news-app-demo.mp4">点击查看原视频</a></td>
+  </tr>
+</table>
+
+更多预览：
+
+- [首页信息流](./assets/cases/news-app/feed-screen.png)
+- [Top Headlines](./assets/cases/news-app/headlines-screen.png)
+- [Discover](./assets/cases/news-app/discover-screen.png)
+
 安装：
 
 ```powershell
