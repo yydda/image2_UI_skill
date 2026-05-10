@@ -11,7 +11,6 @@
 
 先看演示视频：
 
-- 抖音教程： [不会设计不会代码，AI 帮我搞定全套 APP](https://v.douyin.com/MJLektzxKpM/)
 - 复刻演示视频： [assets/demo.mp4](./assets/demo.mp4)
 
 参考图：
