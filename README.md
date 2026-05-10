@@ -7,7 +7,7 @@
 
 这个 skill 的重点不是“把截图大概做出来”，而是先判断哪些区域必须真实生图，哪些区域必须保留为代码，再把生成资产真正接回页面。
 
-[教程演示文档](https://v.douyin.com/MJLektzxKpM/)
+[教程演示视频](https://v.douyin.com/MJLektzxKpM/)
 
 ## 快速开始
 
