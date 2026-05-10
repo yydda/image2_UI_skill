@@ -13,6 +13,8 @@
 
 - 复刻演示视频： [assets/demo.mp4](./assets/demo.mp4)
 
+[![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4)
+
 参考图：
 
 ![参考图](./assets/cover-reference.png)
