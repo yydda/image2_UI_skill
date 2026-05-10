@@ -49,13 +49,6 @@
   </tr>
 </table>
 
-更多预览：
-
-- [首页](./assets/cases/museum-app/home-screen.png)
-- [展览列表](./assets/cases/museum-app/exhibitions-screen.png)
-- [作品详情](./assets/cases/museum-app/detail-screen.png)
-- [案例拆解](./references/museum-app-case-study.md)
-
 ### 女装购物 App
 
 <table>
@@ -73,13 +66,6 @@
   </tr>
 </table>
 
-更多预览：
-
-- [主视觉屏](./assets/cases/fashion-shopping-app/hero-screen.png)
-- [商品首页](./assets/cases/fashion-shopping-app/catalog-screen.png)
-- [收藏页](./assets/cases/fashion-shopping-app/favorites-screen.png)
-- [案例拆解](./references/fashion-shopping-app-case-study.md)
-
 ### 新闻阅读 App
 
 <table>
@@ -96,12 +82,6 @@
     <td><a href="./assets/cases/news-app/news-app-demo.mp4">点击查看原视频</a></td>
   </tr>
 </table>
-
-更多预览：
-
-- [首页信息流](./assets/cases/news-app/feed-screen.png)
-- [Top Headlines](./assets/cases/news-app/headlines-screen.png)
-- [Discover](./assets/cases/news-app/discover-screen.png)
 
 安装：
 
