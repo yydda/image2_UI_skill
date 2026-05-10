@@ -9,15 +9,10 @@
 
 ## 快速开始
 
-先看演示视频：
-
-- 复刻演示视频： [assets/demo.mp4](./assets/demo.mp4)
-
-[![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4)
-
-参考图：
-
-![参考图](./assets/cover-reference.png)
+| 复刻预览 | 参考图 |
+| --- | --- |
+| [![复刻演示视频预览](./assets/demo-preview.gif)](./assets/demo.mp4) | ![参考图](./assets/cover-reference.png) |
+| [点击查看原视频](./assets/demo.mp4) | 原始参考图 |
 
 直接安装：
 
