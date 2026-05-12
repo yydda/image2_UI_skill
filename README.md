@@ -41,7 +41,7 @@
   </tr>
   <tr>
     <td><a href="./assets/cases/museum-app/reference-overview.png"><img src="./assets/cases/museum-app/reference-overview.png" alt="博物馆 App 参考图" width="520"></a></td>
-    <td><a href="./assets/cases/museum-app/museum-app-demo.mp4"><img src="./assets/cases/museum-app/home-screen.png" alt="博物馆 App 预览" width="280"></a></td>
+    <td><a href="./assets/cases/museum-app/museum-app-demo.mp4"><img src="./assets/cases/museum-app/museum-app-preview.gif" alt="博物馆 App 动图预览" width="280"></a></td>
   </tr>
   <tr>
     <td><a href="./assets/cases/museum-app/reference-overview.png">原始参考图</a></td>
@@ -58,7 +58,7 @@
   </tr>
   <tr>
     <td><a href="./assets/cases/fashion-shopping-app/reference-overview.png"><img src="./assets/cases/fashion-shopping-app/reference-overview.png" alt="女装购物 App 参考图" width="520"></a></td>
-    <td><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4"><img src="./assets/cases/fashion-shopping-app/hero-screen.png" alt="女装购物 App 预览" width="280"></a></td>
+    <td><a href="./assets/cases/fashion-shopping-app/fashion-app-demo.mp4"><img src="./assets/cases/fashion-shopping-app/fashion-app-preview.gif" alt="女装购物 App 动图预览" width="280"></a></td>
   </tr>
   <tr>
     <td><a href="./assets/cases/fashion-shopping-app/reference-overview.png">原始参考图</a></td>
@@ -75,7 +75,7 @@
   </tr>
   <tr>
     <td><a href="./assets/cases/news-app/reference-overview.png"><img src="./assets/cases/news-app/reference-overview.png" alt="新闻阅读 App 参考图" width="520"></a></td>
-    <td><a href="./assets/cases/news-app/news-app-demo.mp4"><img src="./assets/cases/news-app/feed-screen.png" alt="新闻阅读 App 预览" width="280"></a></td>
+    <td><a href="./assets/cases/news-app/news-app-demo.mp4"><img src="./assets/cases/news-app/news-app-preview.gif" alt="新闻阅读 App 动图预览" width="280"></a></td>
   </tr>
   <tr>
     <td><a href="./assets/cases/news-app/reference-overview.png">原始参考图</a></td>
