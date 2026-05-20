@@ -20,6 +20,7 @@ $html = Get-Content -LiteralPath (Join-Path $root "index.html") -Raw
 Assert-True (-not ($html -match "https?://")) "Demo should not depend on remote URLs"
 Assert-True (($html -match "data-go=`"home`"") -and ($html -match "data-go=`"meeting`"")) "Missing expected click paths"
 Assert-True (($html -match "dynamic-island")) "Missing iOS Dynamic Island frame detail"
+Assert-True (-not ($html -match '<span class="status-icons"><i>')) "Status icons should use explicit SVG/geometry, not ambiguous CSS glyphs"
 
 $existing = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
 if ($existing) {
@@ -100,12 +101,14 @@ try {
   $afterMeeting = Eval-Js 'document.querySelector("[data-screen=home] [data-go=meeting]").click(), document.querySelector(".phone.is-active").dataset.screen'
   $brokenImages = Eval-Js 'Array.from(document.images).filter(img => !img.complete || img.naturalWidth === 0).length'
   $dynamicIslands = Eval-Js 'document.querySelectorAll(".dynamic-island").length'
+  $statusSvgCount = Eval-Js 'document.querySelectorAll(".status-icons svg").length'
 
   Assert-True ($initial -eq "cover") "Initial screen should be cover"
   Assert-True ($afterHome -eq "home") "Cover -> home click failed"
   Assert-True ($afterMeeting -eq "meeting") "Home -> meeting click failed"
   Assert-True ($brokenImages -eq 0) "Found broken images"
   Assert-True ($dynamicIslands -eq 3) "Expected three iOS Dynamic Island elements"
+  Assert-True ($statusSvgCount -eq 9) "Expected SVG signal/Wi-Fi/battery icons in each status bar"
 
   $ws.CloseAsync([System.Net.WebSockets.WebSocketCloseStatus]::NormalClosure, "done", [Threading.CancellationToken]::None).GetAwaiter().GetResult()
 
@@ -118,6 +121,7 @@ try {
     AfterMeeting = $afterMeeting
     BrokenImages = $brokenImages
     DynamicIslands = $dynamicIslands
+    StatusSvgCount = $statusSvgCount
   }
 }
 finally {

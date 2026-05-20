@@ -148,41 +148,25 @@ button {
 
 .status-icons {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   align-items: center;
 }
 
-.status-icons i:nth-child(1) {
-  width: 13px;
-  height: 8px;
-  background: linear-gradient(to right, #111 20%, transparent 20% 30%, #111 30% 54%, transparent 54% 64%, #111 64%);
-  clip-path: polygon(0 100%, 30% 60%, 60% 28%, 100% 0, 100% 100%);
+.status-icons svg {
+  display: block;
+  width: 16px;
+  height: 12px;
+  fill: none;
+  stroke: #111;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.status-icons i:nth-child(2) {
-  width: 10px;
-  height: 8px;
-  border: 1.5px solid #111;
-  border-top: 0;
-  border-radius: 0 0 8px 8px;
-}
-
-.status-icons i:nth-child(3) {
-  position: relative;
-  width: 18px;
-  height: 8px;
-  border: 1.5px solid #111;
-  border-radius: 3px;
-}
-
-.status-icons i:nth-child(3)::after {
-  content: "";
-  position: absolute;
-  right: -4px;
-  top: 2px;
-  width: 2px;
-  height: 3px;
-  background: #111;
+.status-icons svg:first-child,
+.status-icons svg:last-child {
+  fill: #111;
+  stroke-width: 0;
 }
 
 .notebook-lines {
