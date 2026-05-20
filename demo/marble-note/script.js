@@ -1,4 +1,6 @@
 const phones = Array.from(document.querySelectorAll(".phone"));
+const appViews = Array.from(document.querySelectorAll(".app-view"));
+const dockButtons = Array.from(document.querySelectorAll(".dock [data-view-target]"));
 const toast = document.querySelector(".toast");
 let timer = null;
 
@@ -19,13 +21,35 @@ function setActive(screen) {
   }
 }
 
+function setAppView(view) {
+  appViews.forEach((panel) => {
+    panel.classList.toggle("is-visible", panel.dataset.view === view);
+  });
+  dockButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.viewTarget === view);
+  });
+  setActive("home");
+}
+
 document.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button) return;
 
+  if (button.dataset.viewTarget) {
+    setAppView(button.dataset.viewTarget);
+    showToast(`${button.dataset.viewTarget} page`);
+    return;
+  }
+
   if (button.dataset.go) {
     setActive(button.dataset.go);
     showToast(`${button.dataset.go} opened`);
+    return;
+  }
+
+  if (button.dataset.saveNote !== undefined) {
+    setAppView("folder");
+    showToast("Note saved");
     return;
   }
 

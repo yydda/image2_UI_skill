@@ -70,61 +70,200 @@
               </span>
             </div>
             <div class="app">
-              <header class="app-head">
-                <div>
-                  <h2>✎ Marble note</h2>
-                  <p>Hello, Sarah. How are you today?</p>
+              <section class="app-view is-visible" data-view="home" aria-label="Home page">
+                <header class="app-head">
+                  <div>
+                    <h2>✎ Marble note</h2>
+                    <p>Hello, Sarah. How are you today?</p>
+                  </div>
+                  <button type="button" data-view-target="search" aria-label="Search notes">⌕</button>
+                </header>
+
+                <h3>My folders</h3>
+                <div class="chips">
+                  <button type="button" class="active" data-view-target="folder">My Work (4)</button>
+                  <button type="button" data-toast="Travel plans preview">Travel Plans (2)</button>
+                  <button type="button" data-toast="Plan folder preview">Plan (8)</button>
                 </div>
-                <button data-toast="Search">⌕</button>
-              </header>
 
-              <h3>My folders</h3>
-              <div class="chips">
-                <button class="active">My Work (4)</button>
-                <button>Travel Plans (2)</button>
-                <button>Plan (8)</button>
-              </div>
+                <button type="button" class="folder-card" data-view-target="folder">
+                  <span class="folder-tabs" aria-hidden="true"></span>
+                  <span class="folder-title">My work</span>
+                  <span class="folder-grid">
+                    <span><i class="mint"></i>Overview</span>
+                    <span><i class="blue-dot"></i>Feedback</span>
+                    <span><i class="lilac-dot"></i>Meeting Notes</span>
+                    <span><i class="yellow-dot"></i>Creative Ideas</span>
+                  </span>
+                </button>
 
-              <article class="folder-card">
-                <div class="folder-tabs" aria-hidden="true"></div>
-                <h4>My work</h4>
-                <div class="folder-grid">
-                  <span><i class="mint"></i>Overview</span>
-                  <span><i class="blue-dot"></i>Feedback</span>
-                  <span><i class="lilac-dot"></i>Meeting Notes</span>
-                  <span><i class="yellow-dot"></i>Creative Ideas</span>
+                <h3>Recent note</h3>
+                <div class="notes-grid">
+                  <button type="button" class="mini-note" data-go="meeting">
+                    <b>⭐</b>
+                    <strong>Design Tips</strong>
+                    <span>Keep it simple<br />Focus on usability<br />Consistent spacing</span>
+                  </button>
+                  <button type="button" class="schedule" data-view-target="schedule">
+                    <svg viewBox="0 0 100 90" aria-hidden="true">
+                      <path d="M20 37c-10-18 13-32 29-16 15-19 44-6 31 17 20-6 29 17 11 28-14 9-35 7-43-3-12 13-38 10-45-5-6-13 5-22 17-21Z"/>
+                      <circle cx="39" cy="48" r="3"/><circle cx="61" cy="48" r="3"/>
+                      <path d="M42 61c8 7 17 7 25 0"/>
+                    </svg>
+                    <span>Schedule</span>
+                    <strong>22-12</strong>
+                  </button>
+                  <button type="button" class="mini-note goal" data-view-target="create">
+                    <b>☻</b>
+                    <strong>Daily Goals</strong>
+                    <span>Update color palette<br />Review wireframes</span>
+                  </button>
                 </div>
-              </article>
+              </section>
 
-              <h3>Recent note</h3>
-              <div class="notes-grid">
-                <button class="mini-note" data-go="meeting">
-                  <b>⭐</b>
-                  <strong>Design Tips</strong>
-                  <span>Keep it simple<br />Focus on usability<br />Consistent spacing</span>
-                </button>
-                <button class="schedule" data-toast="Schedule opened">
-                  <svg viewBox="0 0 100 90" aria-hidden="true">
-                    <path d="M20 37c-10-18 13-32 29-16 15-19 44-6 31 17 20-6 29 17 11 28-14 9-35 7-43-3-12 13-38 10-45-5-6-13 5-22 17-21Z"/>
-                    <circle cx="39" cy="48" r="3"/><circle cx="61" cy="48" r="3"/>
-                    <path d="M42 61c8 7 17 7 25 0"/>
-                  </svg>
-                  <span>Schedule</span>
-                  <strong>22-12</strong>
-                </button>
-                <button class="mini-note goal" data-toast="Daily goals">
-                  <b>☻</b>
-                  <strong>Daily Goals</strong>
-                  <span>Update color palette<br />Review wireframes</span>
-                </button>
-              </div>
+              <section class="app-view" data-view="folder" aria-label="Folder detail page">
+                <header class="view-head">
+                  <button type="button" data-view-target="home" aria-label="Back to home">‹</button>
+                  <div>
+                    <h2>My work</h2>
+                    <p>4 notes · updated today</p>
+                  </div>
+                  <button type="button" data-view-target="create" aria-label="Add note">＋</button>
+                </header>
+                <div class="folder-hero">
+                  <span class="tab yellow-dot"></span>
+                  <span class="tab lilac-dot"></span>
+                  <strong>Project notebook</strong>
+                  <p>Notes, feedback, sketches and meeting recaps for active work.</p>
+                </div>
+                <div class="list-stack">
+                  <button type="button" data-go="meeting">
+                    <span class="note-dot lilac-dot"></span>
+                    <strong>Meeting Notes</strong>
+                    <small>Key points and next steps</small>
+                  </button>
+                  <button type="button" data-view-target="create">
+                    <span class="note-dot yellow-dot"></span>
+                    <strong>Creative Ideas</strong>
+                    <small>Draft a new cover concept</small>
+                  </button>
+                  <button type="button" data-view-target="schedule">
+                    <span class="note-dot blue-dot"></span>
+                    <strong>Feedback</strong>
+                    <small>Review spacing and states</small>
+                  </button>
+                </div>
+              </section>
+
+              <section class="app-view" data-view="search" aria-label="Search page">
+                <header class="view-head">
+                  <button type="button" data-view-target="home" aria-label="Back to home">‹</button>
+                  <div>
+                    <h2>Search</h2>
+                    <p>Find notes, tags and folders</p>
+                  </div>
+                </header>
+                <label class="search-box">
+                  <span>⌕</span>
+                  <input value="meeting" aria-label="Search query" />
+                </label>
+                <h3>Results</h3>
+                <div class="list-stack">
+                  <button type="button" data-go="meeting">
+                    <strong>Meeting Notes</strong>
+                    <small>Matched in My work · Dec 7</small>
+                  </button>
+                  <button type="button" data-view-target="folder">
+                    <strong>Design Tips</strong>
+                    <small>3 matched lines · My work</small>
+                  </button>
+                  <button type="button" data-view-target="schedule">
+                    <strong>Daily Goals</strong>
+                    <small>Palette and wireframe tasks</small>
+                  </button>
+                </div>
+              </section>
+
+              <section class="app-view" data-view="create" aria-label="Create note page">
+                <header class="view-head">
+                  <button type="button" data-view-target="home" aria-label="Cancel new note">‹</button>
+                  <div>
+                    <h2>New note</h2>
+                    <p>Draft before saving</p>
+                  </div>
+                  <button type="button" data-save-note>Save</button>
+                </header>
+                <div class="editor-card">
+                  <label>
+                    <span>Title</span>
+                    <input value="Mood board ideas" />
+                  </label>
+                  <label>
+                    <span>Body</span>
+                    <textarea>Try a softer purple cover, keep doodles playful, and test card spacing.</textarea>
+                  </label>
+                  <div class="swatches" aria-label="Color labels">
+                    <button type="button" class="active yellow-dot" data-toast="Yellow selected"></button>
+                    <button type="button" class="lilac-dot" data-toast="Lilac selected"></button>
+                    <button type="button" class="mint" data-toast="Mint selected"></button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="app-view" data-view="schedule" aria-label="Schedule page">
+                <header class="view-head">
+                  <button type="button" data-view-target="home" aria-label="Back to home">‹</button>
+                  <div>
+                    <h2>Schedule</h2>
+                    <p>December planning</p>
+                  </div>
+                </header>
+                <div class="calendar-card">
+                  <div class="calendar-grid" aria-label="December week">
+                    <span>18</span><span>19</span><span>20</span><span>21</span><strong>22</strong><span>23</span><span>24</span>
+                  </div>
+                  <p>22 Dec · Creative review</p>
+                </div>
+                <div class="list-stack">
+                  <button type="button" data-go="meeting">
+                    <strong>10:00 Meeting Notes</strong>
+                    <small>Review onboarding notes</small>
+                  </button>
+                  <button type="button" data-view-target="create">
+                    <strong>14:30 Sketch polish</strong>
+                    <small>Refine cloud doodle and toolbar</small>
+                  </button>
+                </div>
+              </section>
+
+              <section class="app-view" data-view="settings" aria-label="Settings page">
+                <header class="view-head">
+                  <button type="button" data-view-target="home" aria-label="Back to home">‹</button>
+                  <div>
+                    <h2>Settings</h2>
+                    <p>Sarah's workspace</p>
+                  </div>
+                </header>
+                <div class="profile-card">
+                  <span>S</span>
+                  <div>
+                    <strong>Sarah Lin</strong>
+                    <small>Creative notebook sync on</small>
+                  </div>
+                </div>
+                <div class="settings-list">
+                  <button type="button" data-toast="Theme switched"><span>Soft paper theme</span><b>On</b></button>
+                  <button type="button" data-toast="Backup checked"><span>Cloud backup</span><b>Ready</b></button>
+                  <button type="button" data-toast="Export preview"><span>Export notes</span><b>PDF</b></button>
+                </div>
+              </section>
             </div>
             <nav class="dock" aria-label="Marble note navigation">
-              <button data-go="cover">⌂</button>
-              <button data-toast="Ideas">✎</button>
-              <button class="active" data-toast="Create note">＋</button>
-              <button data-go="meeting">▤</button>
-              <button data-toast="Settings">⌘</button>
+              <button type="button" class="active" data-view-target="home">⌂</button>
+              <button type="button" data-view-target="search">⌕</button>
+              <button type="button" data-view-target="create">＋</button>
+              <button type="button" data-go="meeting">▤</button>
+              <button type="button" data-view-target="settings">⌘</button>
             </nav>
           </div>
         </div>

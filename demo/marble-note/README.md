@@ -1,6 +1,6 @@
 # Marble Note Demo
 
-Responsive landing-style preview for a creative notebook mobile app.
+Responsive, clickable iOS-style prototype for a creative notebook mobile app.
 
 ## Run
 
@@ -18,8 +18,14 @@ http://127.0.0.1:4190/
 ## Interactions
 
 - Cover -> Home via `Get started`.
-- Home -> Meeting note via the Design Tips card or document tab.
+- Home -> Folder via the `My Work` folder card.
+- Home -> Search via the search icon or bottom navigation.
+- Home -> Create note via the plus button or Daily Goals card.
+- Home -> Schedule via the purple Schedule card.
+- Home -> Settings via the bottom navigation.
+- Folder/Search/Schedule -> Meeting note via matching note cards.
 - Meeting note -> Home via the back button.
+- Save on the Create page returns to the Folder page.
 - Other controls show local feedback states.
 
 ## Screenshots
@@ -32,6 +38,8 @@ http://127.0.0.1:4190/
 ```powershell
 powershell -ExecutionPolicy Bypass -File demo/marble-note/validate.ps1
 ```
+
+The validation checks page startup, screenshot creation, the cover/home/detail flow, all added logical pages (`folder`, `search`, `create`, `schedule`, `settings`), iOS frame details, local images, and broken image count.
 
 ## Asset Notes
 

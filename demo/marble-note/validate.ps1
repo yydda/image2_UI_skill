@@ -19,6 +19,7 @@ Assert-True (Test-Path -LiteralPath $chrome) "Chrome not found at $chrome"
 $html = Get-Content -LiteralPath (Join-Path $root "index.html") -Raw
 Assert-True (-not ($html -match "https?://")) "Demo should not depend on remote URLs"
 Assert-True (($html -match "data-go=`"home`"") -and ($html -match "data-go=`"meeting`"")) "Missing expected click paths"
+Assert-True (($html -match "data-view=`"search`"") -and ($html -match "data-view=`"create`"") -and ($html -match "data-view=`"schedule`"") -and ($html -match "data-view=`"settings`"")) "Missing logical app pages"
 Assert-True (($html -match "dynamic-island")) "Missing iOS Dynamic Island frame detail"
 Assert-True (-not ($html -match '<span class="status-icons"><i>')) "Status icons should use explicit SVG/geometry, not ambiguous CSS glyphs"
 
@@ -98,17 +99,29 @@ try {
   Send-Cdp "Runtime.enable" | Out-Null
   $initial = Eval-Js 'document.querySelector(".phone.is-active").dataset.screen'
   $afterHome = Eval-Js 'document.querySelector("[data-screen=cover] [data-go=home]").click(), document.querySelector(".phone.is-active").dataset.screen'
-  $afterMeeting = Eval-Js 'document.querySelector("[data-screen=home] [data-go=meeting]").click(), document.querySelector(".phone.is-active").dataset.screen'
+  $afterSearch = Eval-Js 'document.querySelector("[data-view-target=search]").click(), document.querySelector(".app-view.is-visible").dataset.view'
+  $afterCreate = Eval-Js 'document.querySelector(".dock [data-view-target=create]").click(), document.querySelector(".app-view.is-visible").dataset.view'
+  $afterSchedule = Eval-Js 'document.querySelector(".dock [data-view-target=home]").click(), document.querySelector(".schedule").click(), document.querySelector(".app-view.is-visible").dataset.view'
+  $afterSettings = Eval-Js 'document.querySelector(".dock [data-view-target=settings]").click(), document.querySelector(".app-view.is-visible").dataset.view'
+  $afterFolder = Eval-Js 'document.querySelector("[data-view=settings] [data-view-target=home]").click(), document.querySelector(".folder-card").click(), document.querySelector(".app-view.is-visible").dataset.view'
+  $afterMeeting = Eval-Js 'document.querySelector("[data-view=folder] [data-go=meeting]").click(), document.querySelector(".phone.is-active").dataset.screen'
   $brokenImages = Eval-Js 'Array.from(document.images).filter(img => !img.complete || img.naturalWidth === 0).length'
   $dynamicIslands = Eval-Js 'document.querySelectorAll(".dynamic-island").length'
   $statusSvgCount = Eval-Js 'document.querySelectorAll(".status-icons svg").length'
+  $appViewCount = Eval-Js 'document.querySelectorAll(".app-view").length'
 
   Assert-True ($initial -eq "cover") "Initial screen should be cover"
   Assert-True ($afterHome -eq "home") "Cover -> home click failed"
-  Assert-True ($afterMeeting -eq "meeting") "Home -> meeting click failed"
+  Assert-True ($afterSearch -eq "search") "Home -> search click failed"
+  Assert-True ($afterCreate -eq "create") "Dock -> create click failed"
+  Assert-True ($afterSchedule -eq "schedule") "Home -> schedule click failed"
+  Assert-True ($afterSettings -eq "settings") "Dock -> settings click failed"
+  Assert-True ($afterFolder -eq "folder") "Home -> folder click failed"
+  Assert-True ($afterMeeting -eq "meeting") "Folder -> meeting click failed"
   Assert-True ($brokenImages -eq 0) "Found broken images"
   Assert-True ($dynamicIslands -eq 3) "Expected three iOS Dynamic Island elements"
   Assert-True ($statusSvgCount -eq 9) "Expected SVG signal/Wi-Fi/battery icons in each status bar"
+  Assert-True ($appViewCount -ge 6) "Expected expanded logical app pages"
 
   $ws.CloseAsync([System.Net.WebSockets.WebSocketCloseStatus]::NormalClosure, "done", [Threading.CancellationToken]::None).GetAwaiter().GetResult()
 
@@ -118,10 +131,16 @@ try {
     Screenshot = $desktopShot
     Initial = $initial
     AfterHome = $afterHome
+    AfterSearch = $afterSearch
+    AfterCreate = $afterCreate
+    AfterSchedule = $afterSchedule
+    AfterSettings = $afterSettings
+    AfterFolder = $afterFolder
     AfterMeeting = $afterMeeting
     BrokenImages = $brokenImages
     DynamicIslands = $dynamicIslands
     StatusSvgCount = $statusSvgCount
+    AppViewCount = $appViewCount
   }
 }
 finally {
