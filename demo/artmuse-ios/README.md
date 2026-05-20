@@ -27,6 +27,12 @@ http://127.0.0.1:4183/
 - `screenshots/artmuse-desktop.png`
 - `screenshots/artmuse-mobile.png`
 
+## Validate
+
+```powershell
+powershell -ExecutionPolicy Bypass -File demo/artmuse-ios/validate.ps1
+```
+
 ## Asset Notes
 
 All artwork thumbnails are local SVG assets under `assets/` so the demo can run without remote image loading.
