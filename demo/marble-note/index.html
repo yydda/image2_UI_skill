@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marble Note Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="hero" aria-label="Marble Note app landing demo">
+      <div class="band band-one" aria-hidden="true"></div>
+      <div class="band band-two" aria-hidden="true"></div>
+
+      <section class="phone phone-left is-active" data-screen="cover" aria-label="Creative notebook cover screen">
+        <div class="device">
+          <div class="screen">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons"><i></i><i></i><i></i></span>
+            </div>
+            <div class="notebook-lines" aria-hidden="true"></div>
+            <div class="sticker sticker-green">∪</div>
+            <div class="sticker sticker-blue">B</div>
+            <div class="sticker sticker-pink">I</div>
+            <svg class="paper-plane" viewBox="0 0 120 100" aria-hidden="true">
+              <path d="M10 48 104 10 74 87 53 58 10 48Z" />
+              <path d="m53 58 51-48" />
+            </svg>
+            <svg class="flower-doodle" viewBox="0 0 300 310" aria-hidden="true">
+              <path class="blue" d="M132 207C92 187 32 169 44 108c8-39 46-51 75-24 13-50 78-58 96-13 15 39-8 82-45 115-12 10-24 17-38 21Z"/>
+              <path class="yellow" d="M119 193c-17-41-20-77-10-118M143 196c6-46 4-88-8-127M164 185c22-43 30-80 24-112M95 180c-26-27-37-60-31-98"/>
+              <path class="blue" d="M139 206c0 36 2 68 3 94M145 250c-30-37-60-45-89-29-8 36 35 47 89 29Z"/>
+              <path class="blue" d="M163 250c30-34 58-43 86-28 7 33-32 45-86 28Z"/>
+              <path class="blue" d="M201 212c35 34 49 57 52 88"/>
+            </svg>
+            <svg class="pencil" viewBox="0 0 190 80" aria-hidden="true">
+              <path d="M15 50 137 13l31 25L47 76Z"/>
+              <path d="m137 13 15-9 26 22-10 12"/>
+              <path d="m47 76-32-26"/>
+              <path d="m74 67 95-30M58 53l95-30"/>
+            </svg>
+
+            <div class="cover-copy">
+              <h1><mark>Your Creative</mark><br />Notebook</h1>
+              <p>Capture ideas and sketch freely in one app.</p>
+              <div class="actions">
+                <button data-toast="Login preview">Log in</button>
+                <button class="dark" data-go="home">Get started</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone phone-center" data-screen="home" aria-label="Marble Note home screen">
+        <div class="device">
+          <div class="screen">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons"><i></i><i></i><i></i></span>
+            </div>
+            <div class="app">
+              <header class="app-head">
+                <div>
+                  <h2>✎ Marble note</h2>
+                  <p>Hello, Sarah. How are you today?</p>
+                </div>
+                <button data-toast="Search">⌕</button>
+              </header>
+
+              <h3>My folders</h3>
+              <div class="chips">
+                <button class="active">My Work (4)</button>
+                <button>Travel Plans (2)</button>
+                <button>Plan (8)</button>
+              </div>
+
+              <article class="folder-card">
+                <div class="folder-tabs" aria-hidden="true"></div>
+                <h4>My work</h4>
+                <div class="folder-grid">
+                  <span><i class="mint"></i>Overview</span>
+                  <span><i class="blue-dot"></i>Feedback</span>
+                  <span><i class="lilac-dot"></i>Meeting Notes</span>
+                  <span><i class="yellow-dot"></i>Creative Ideas</span>
+                </div>
+              </article>
+
+              <h3>Recent note</h3>
+              <div class="notes-grid">
+                <button class="mini-note" data-go="meeting">
+                  <b>⭐</b>
+                  <strong>Design Tips</strong>
+                  <span>Keep it simple<br />Focus on usability<br />Consistent spacing</span>
+                </button>
+                <button class="schedule" data-toast="Schedule opened">
+                  <svg viewBox="0 0 100 90" aria-hidden="true">
+                    <path d="M20 37c-10-18 13-32 29-16 15-19 44-6 31 17 20-6 29 17 11 28-14 9-35 7-43-3-12 13-38 10-45-5-6-13 5-22 17-21Z"/>
+                    <circle cx="39" cy="48" r="3"/><circle cx="61" cy="48" r="3"/>
+                    <path d="M42 61c8 7 17 7 25 0"/>
+                  </svg>
+                  <span>Schedule</span>
+                  <strong>22-12</strong>
+                </button>
+                <button class="mini-note goal" data-toast="Daily goals">
+                  <b>☻</b>
+                  <strong>Daily Goals</strong>
+                  <span>Update color palette<br />Review wireframes</span>
+                </button>
+              </div>
+            </div>
+            <nav class="dock" aria-label="Marble note navigation">
+              <button data-go="cover">⌂</button>
+              <button data-toast="Ideas">✎</button>
+              <button class="active" data-toast="Create note">＋</button>
+              <button data-go="meeting">▤</button>
+              <button data-toast="Settings">⌘</button>
+            </nav>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone phone-right" data-screen="meeting" aria-label="Meeting note document screen">
+        <div class="device">
+          <div class="screen">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons"><i></i><i></i><i></i></span>
+            </div>
+            <article class="doc">
+              <header class="doc-top">
+                <button data-go="home">‹</button>
+                <button class="pill">My work⌄</button>
+                <div>
+                  <button data-toast="Bookmark">▱</button>
+                  <button data-toast="More">…</button>
+                </div>
+              </header>
+              <h1>Meeting Notes</h1>
+              <p class="date">Date: Dec 7, 2024</p>
+              <h2>Key Points Discussed:</h2>
+              <ul>
+                <li>Redesign the onboarding flow to improve user retention.</li>
+                <li>Update color scheme for accessibility compliance.</li>
+                <li>Prioritize user testing for the new feature release.</li>
+              </ul>
+              <svg class="signature" viewBox="0 0 310 160" aria-hidden="true">
+                <path d="M20 105c10-68 44-91 79-60 29 26-23 86-28 36-4-42 55-52 78-10 15 27-25 55-21 11 4-45 46-14 35 24 16-37 44-92 55-75 10 16-4 60 16 67 16 6 35-5 55-20"/>
+              </svg>
+            </article>
+            <div class="mic">◉</div>
+            <div class="formatbar">
+              <button class="active">●</button>
+              <button>✎</button>
+              <button>☰</button>
+              <button>B</button>
+              <button>U</button>
+              <button>≡</button>
+              <button>☷</button>
+              <button>▣</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div class="watermark">小红书</div>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="./script.js"></script>
+  </body>
+</html>
