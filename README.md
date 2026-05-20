@@ -1,5 +1,11 @@
 # Image2 to UI Skill  图片转UI界面
 
+网页参考：
+
+- [Dribbble](https://dribbble.com/)
+- [Behance](https://www.behance.net/)
+- [Pinterest](https://www.pinterest.com/)
+
 基于 Codex 适配的图片转 UI 界面 skill。
 
 把 UI 截图、设计稿、页面参考图转换成：
