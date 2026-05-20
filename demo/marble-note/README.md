@@ -36,3 +36,5 @@ powershell -ExecutionPolicy Bypass -File demo/marble-note/validate.ps1
 ## Asset Notes
 
 This demo uses local code/SVG/CSS artwork placeholders. It does not claim real image2 generation because no confirmed image2 entrypoint is available in this environment.
+
+See `image2-asset-plan.md` for the pending real image2 asset breakdown and prompts.

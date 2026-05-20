@@ -19,6 +19,7 @@ Assert-True (Test-Path -LiteralPath $chrome) "Chrome not found at $chrome"
 $html = Get-Content -LiteralPath (Join-Path $root "index.html") -Raw
 Assert-True (-not ($html -match "https?://")) "Demo should not depend on remote URLs"
 Assert-True (($html -match "data-go=`"home`"") -and ($html -match "data-go=`"meeting`"")) "Missing expected click paths"
+Assert-True (($html -match "dynamic-island")) "Missing iOS Dynamic Island frame detail"
 
 $existing = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
 if ($existing) {
@@ -98,11 +99,13 @@ try {
   $afterHome = Eval-Js 'document.querySelector("[data-screen=cover] [data-go=home]").click(), document.querySelector(".phone.is-active").dataset.screen'
   $afterMeeting = Eval-Js 'document.querySelector("[data-screen=home] [data-go=meeting]").click(), document.querySelector(".phone.is-active").dataset.screen'
   $brokenImages = Eval-Js 'Array.from(document.images).filter(img => !img.complete || img.naturalWidth === 0).length'
+  $dynamicIslands = Eval-Js 'document.querySelectorAll(".dynamic-island").length'
 
   Assert-True ($initial -eq "cover") "Initial screen should be cover"
   Assert-True ($afterHome -eq "home") "Cover -> home click failed"
   Assert-True ($afterMeeting -eq "meeting") "Home -> meeting click failed"
   Assert-True ($brokenImages -eq 0) "Found broken images"
+  Assert-True ($dynamicIslands -eq 3) "Expected three iOS Dynamic Island elements"
 
   $ws.CloseAsync([System.Net.WebSockets.WebSocketCloseStatus]::NormalClosure, "done", [Threading.CancellationToken]::None).GetAwaiter().GetResult()
 
@@ -114,6 +117,7 @@ try {
     AfterHome = $afterHome
     AfterMeeting = $afterMeeting
     BrokenImages = $brokenImages
+    DynamicIslands = $dynamicIslands
   }
 }
 finally {
