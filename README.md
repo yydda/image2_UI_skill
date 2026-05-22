@@ -46,6 +46,25 @@
 
 下面这些参考图和原视频已经直接放进仓库里，打开 GitHub 页面就能点开看。
 
+### hicolor 真实增长案例
+
+从 INS 视觉趋势出发，用 Codex 做成图片创作小工具，再用 Vercel 上线；上线 3 天获得 1,155 visitors / 2,102 page views。这个案例更适合技术社区读者理解：为什么 UI 复刻不能只停留在 HTML/CSS 近似，以及 image2 资产边界为什么重要。
+
+<table>
+  <tr>
+    <th>三天访问数据</th>
+    <th>传播证据</th>
+  </tr>
+  <tr>
+    <td><a href="./assets/cases/hicolor/traffic-3-days.png"><img src="./assets/cases/hicolor/traffic-3-days.png" alt="hicolor 三天访问数据" width="520"></a></td>
+    <td><a href="./assets/cases/hicolor/threads-recommendation.png"><img src="./assets/cases/hicolor/threads-recommendation.png" alt="Threads 推荐 hicolor" width="280"></a></td>
+  </tr>
+  <tr>
+    <td><a href="./references/hicolor-case-study.md">阅读完整 case study</a></td>
+    <td><a href="./assets/cases/hicolor/xiaohongshu-pinned.jpg">查看小红书验证图</a></td>
+  </tr>
+</table>
+
 ### 博物馆 App
 
 <table>

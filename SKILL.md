@@ -112,6 +112,8 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
 
+当用户要把社媒视觉热点、INS/Pinterest 小趋势或图像创作工具做成可用网页，并关心上线验证、传播数据或技术社区案例时，可读取 `references/hicolor-case-study.md` 作为真实项目参考。
+
 ## 真实生图验真
 
 如果任务涉及 image2，最终必须输出一段“生图验真”信息，至少包含：

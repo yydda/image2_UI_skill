@@ -48,6 +48,10 @@ $readmePath = Assert-File "README.md"
 $openaiYamlPath = Assert-File "agents\openai.yaml"
 Assert-File "references\asset-manifest-and-prompts.md" | Out-Null
 Assert-File "references\image2-entrypoint.md" | Out-Null
+Assert-File "references\hicolor-case-study.md" | Out-Null
+Assert-File "assets\cases\hicolor\traffic-3-days.png" | Out-Null
+Assert-File "assets\cases\hicolor\xiaohongshu-pinned.jpg" | Out-Null
+Assert-File "assets\cases\hicolor\threads-recommendation.png" | Out-Null
 
 $skill = Get-Content -LiteralPath $skillPath -Raw -Encoding UTF8
 $readme = Get-Content -LiteralPath $readmePath -Raw -Encoding UTF8
