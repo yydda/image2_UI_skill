@@ -90,17 +90,27 @@ $results = [System.Collections.Generic.List[object]]::new()
 $results.Add([pscustomobject]@{
   Check = "skill-structure"
   Ok = $true
+  Url = $null
+  Screenshot = $null
+  Initial = $null
+  BrokenImages = $null
   Detail = "SKILL.md, references, README links, agents metadata, and demo file structure passed"
 })
 
 if ($RunDemos) {
   foreach ($demo in $demoRoots) {
     $script = Join-Path $root (Join-Path $demo "validate.ps1")
-    $output = & powershell -ExecutionPolicy Bypass -File $script
+    $output = & $script
+    $demoResult = @($output | Where-Object { $_ -is [pscustomobject] })[-1]
+    Assert-True $demoResult "Demo validator did not return a result object: $demo"
     $results.Add([pscustomobject]@{
       Check = $demo
-      Ok = $true
-      Detail = ($output | Out-String).Trim()
+      Ok = [bool]$demoResult.Ok
+      Url = $demoResult.Url
+      Screenshot = $demoResult.Screenshot
+      Initial = $demoResult.Initial
+      BrokenImages = $demoResult.BrokenImages
+      Detail = $demoResult
     })
   }
 }
