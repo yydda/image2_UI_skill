@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产。分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须使用项目指定的 image2 调用入口，不要用 imagegen、gpt-image、OpenRouter、OPENAI_API_KEY 或自写 Python SDK 代替。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
+description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, and high-fidelity UI recreation from reference images. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须使用项目指定的 image2 调用入口，不要用 imagegen、gpt-image、OpenRouter、OPENAI_API_KEY 或自写 Python SDK 代替。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
 ---
 
 # Image to UI Skill
@@ -39,6 +39,7 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 执行时：
 
+- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口。
 - 不要把 `imagegen` skill、`gpt-image-*` CLI/API、OpenRouter/ICU、OpenAI SDK、`OPENAI_API_KEY` 检查、自写 Python 生图脚本或 `py -3` 启动器当作 image2。
 - 不要因为 image2 暂不可用就自行切换到其他生图服务；除非用户明确说可以用替代方案。
 - 如果当前会话或环境无法确认 image2 可用，先停下来说明“无法确认 image2 可用”，列出已完成的 UI 拆解和待生成资产，不要声称已经调用 image2。
@@ -109,7 +110,7 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 12. 将最终页面截图与原始 UI 参考图做差距核对，列出差异，修正后再次截图对比。
 13. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image2 资产。
 
-构建资产清单、编写 image-to-ui 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
+确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
 
 ## 真实生图验真
 
