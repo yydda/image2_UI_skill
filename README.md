@@ -138,6 +138,7 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 image2_UI_skill/
 ├── SKILL.md
 ├── agents/openai.yaml
+├── scripts/image2_asset.py
 ├── references/
 └── demo/
 ```
@@ -154,8 +155,9 @@ image2_UI_skill/
 1. 先判断哪些部分应该用代码实现，哪些部分必须真实调用 image2 生图
 2. 不要把标题、正文、按钮文字、价格做进图片里
 3. 需要真实生成的位图资产，请实际生成并接回页面
-4. 如果没有真实生成位图并接入页面，不要告诉我已经用了 image2
-5. 最后告诉我生成了哪些图片、图片放在哪、哪些区域仍然是代码实现
+4. 如果 image2 不可用，自动走 OpenRouter ICU gpt-image-2 备案通道
+5. 如果没有真实生成位图并接入页面，不要告诉我已经用了 image2
+6. 最后告诉我生成了哪些图片、图片放在哪、实际生图通道是什么、哪些区域仍然是代码实现
 
 技术栈：
 - HTML/CSS/JS
@@ -163,7 +165,40 @@ image2_UI_skill/
 直接开始，不用先问我。
 ```
 
-如果当前项目没有暴露 image2 入口，skill 应该明确说明“无法确认 image2 可用”，并只完成 UI 拆解、资产清单、提示词和代码骨架，不应冒用其他图片模型。
+如果当前项目没有暴露 image2 入口，skill 会先使用 `scripts/image2_asset.py` 尝试原生 image2；如果不可用或失败，自动走 OpenRouter ICU `gpt-image-2` 备案通道，并在最终说明中标明实际通道。
+
+## 生图通道备案
+
+执行顺序固定为：
+
+1. 先走项目/环境里的原生 `image2` 入口。
+2. 如果原生 `image2` 不可用或失败，自动走 OpenRouter ICU `gpt-image-2` 备案通道。
+3. 只要任一通道成功，都必须落地真实图片文件，并把图片接回 UI 页面。
+
+统一命令入口是：
+
+```powershell
+python scripts\image2_asset.py generate `
+  --prompt "无文字、无 logo 的 UI 主视觉图片提示词" `
+  --output public\generated\hero-main.png `
+  --size 1536x1024 `
+  --quality medium `
+  --output-format png
+```
+
+参考图编辑使用：
+
+```powershell
+python scripts\image2_asset.py edit `
+  --image reference.png `
+  --prompt "基于参考图生成无文字、无 logo 的 UI 资产" `
+  --output public\generated\asset.png `
+  --size 1536x1024 `
+  --quality medium `
+  --output-format png
+```
+
+最终报告里要写清实际通道：`native-image2` 或 `openrouter-icu-gpt-image-2`。
 
 ## 工作流程
 
@@ -172,7 +207,7 @@ image2_UI_skill/
 1. 先检查参考图，判断页面里哪些部分是代码 UI，哪些部分是图片资产
 2. 输出前期审查和资产清单
 3. 为必须生图的区域编写提示词
-4. 调用 `image2` 生成真实位图
+4. 调用 `scripts/image2_asset.py` 生成真实位图，优先原生 image2，必要时自动走 OpenRouter ICU `gpt-image-2` 备案通道
 5. 做裁切、缩放、透明背景、尺寸修正等后处理
 6. 把图片接回前端页面
 7. 补齐可点击行为和页面跳转
@@ -202,19 +237,20 @@ powershell -ExecutionPolicy Bypass -File .\validate.ps1 -RunDemos
 
 ## image2 入口规则
 
-这个 skill 里的 `image2` 指项目指定的 image2 调用入口，不等于任意图片生成工具。
+这个 skill 里的 `image2` 指项目指定的 image2 调用入口，不等于任意图片生成工具。当前仓库还提供 `scripts/image2_asset.py` 作为统一入口，原生 image2 不可用或失败时会自动转到 OpenRouter ICU `gpt-image-2` 备案通道。
 
 真实生图前，Codex 会按 `references/image2-entrypoint.md` 先确认入口。只有以下情况才算确认：
 
 - 用户明确给出 image2 命令、脚本或工具
 - 项目文档、AGENTS.md 或已有代码明确写出 image2 调用方式
 - 当前环境存在稳定的 image2 封装，并能确认输入、输出和文件落地路径
+- 当前仓库的 `scripts/image2_asset.py` fallback 成功调用 OpenRouter ICU `gpt-image-2`
 
-以下方式不能冒充 image2：
+以下方式不能冒充 image2 或本仓库备案通道：
 
 - imagegen skill
-- gpt-image 系列 API/CLI
-- OpenRouter、ICU 或其他中转图片 API
+- 未经 `scripts/image2_asset.py` 统一入口调用的 gpt-image 系列 API/CLI
+- 未经本仓库备案规则确认的 OpenRouter、ICU 或其他中转图片 API
 - 自写 OpenAI SDK 生图脚本
 - 只用 CSS/SVG/渐变/噪点近似视觉
 
@@ -222,11 +258,11 @@ powershell -ExecutionPolicy Bypass -File .\validate.ps1 -RunDemos
 
 ### 为什么 Codex 说“无法确认 image2 可用”？
 
-因为当前项目没有提供可验证的 image2 调用入口。此时它应该继续完成 UI 拆解、资产清单和提示词准备，但不能声称已经真实生图。
+因为当前项目没有提供可验证的原生 image2 调用入口。此时 `scripts/image2_asset.py` 会自动尝试 OpenRouter ICU `gpt-image-2` 备案通道；如果备案通道也不可用，它应该继续完成 UI 拆解、资产清单和提示词准备，但不能声称已经真实生图。
 
 ### 能不能让它先用别的生图工具代替？
 
-可以，但需要你明确授权。否则这个 skill 会拒绝把 imagegen、OpenRouter、gpt-image 或自写 SDK 结果说成 image2。
+OpenRouter ICU `gpt-image-2` 已经作为本仓库备案通道内置；其它替代工具仍需要你明确授权。否则这个 skill 会拒绝把 imagegen、未登记的 OpenRouter/gpt-image 调用或自写 SDK 结果说成 image2。
 
 ### 为什么不把整张 UI 直接生成成一张图？
 

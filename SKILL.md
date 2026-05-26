@@ -1,6 +1,6 @@
 ---
 name: image-to-ui-skill
-description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, and high-fidelity UI recreation from reference images. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须使用项目指定的 image2 调用入口，不要用 imagegen、gpt-image、OpenRouter、OPENAI_API_KEY 或自写 Python SDK 代替。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
+description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, and high-fidelity UI recreation from reference images. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须先使用项目指定 image2 入口；如果 image2 不可用或失败，必须自动备案走 OpenRouter ICU gpt-image-2 通道，确保真实生成位图文件。不要用 imagegen 或其他未指定图片工具替代。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
 ---
 
 # Image to UI Skill
@@ -35,15 +35,62 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 ## image2 调用边界
 
-本 skill 里的 `image2` 指项目指定的 image2 调用入口，不等同于任意图片生成工具。
+本 skill 里的 `image2` 指项目指定的 image2 调用入口，不等同于任意图片生成工具。当前 skill 也包含一个明确备案通道：当原生 image2 命令不可用或失败时，必须使用 `scripts/image2_asset.py` 自动转到 OpenRouter ICU `gpt-image-2`，以确保任务能真实落地图片文件。
 
 执行时：
 
-- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口。
-- 不要把 `imagegen` skill、`gpt-image-*` CLI/API、OpenRouter/ICU、OpenAI SDK、`OPENAI_API_KEY` 检查、自写 Python 生图脚本或 `py -3` 启动器当作 image2。
-- 不要因为 image2 暂不可用就自行切换到其他生图服务；除非用户明确说可以用替代方案。
-- 如果当前会话或环境无法确认 image2 可用，先停下来说明“无法确认 image2 可用”，列出已完成的 UI 拆解和待生成资产，不要声称已经调用 image2。
-- 可以继续实现代码 UI 骨架，但必须明确标注“尚未完成真实 image2 生图”，不能把代码近似、CSS/SVG 视觉或其它模型生成图写成 image2 结果。
+- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口和备案通道。
+- 优先调用本 skill 的 `scripts/image2_asset.py`，不要自己重写 API 请求。
+- `scripts/image2_asset.py` 会先尝试原生 `image2` 命令或 `IMAGE2_COMMAND` 环境变量；失败后自动调用 `openrouter-icu-image/scripts/openrouter_icu_image.py`，模型固定默认为 `gpt-image-2`。
+- 可以把 OpenRouter ICU `gpt-image-2` 记为“image2 备案通道”或“fallback 通道”，但最终必须说明实际走的是 `native-image2` 还是 `openrouter-icu-gpt-image-2`。
+- 不要把 `imagegen` skill、其它图片生成插件、随机在线生图服务或手写 SDK 请求当作本 skill 的 image2/fallback 通道。
+- 如果原生 image2 和 OpenRouter ICU fallback 都不可用，再停止并说明缺少可用生图入口；不要声称已经生图。
+- 可以继续实现代码 UI 骨架，但必须明确标注“尚未完成真实位图资产生成”，不能把代码近似、CSS/SVG 视觉或其它来源图片写成 image2 结果。
+
+### 生图命令
+
+文本生图：
+
+```powershell
+python scripts\image2_asset.py generate `
+  --prompt "为 App 首屏生成一张无文字、无 logo 的高级时尚产品主视觉，留出左侧文案空间，柔和自然光，4:3" `
+  --output public\generated\hero-main.png `
+  --size 1536x1024 `
+  --quality medium `
+  --output-format png
+```
+
+参考图编辑或多图参考：
+
+```powershell
+python scripts\image2_asset.py edit `
+  --image reference.png `
+  --prompt "保留参考图主体轮廓和色彩气质，生成无文字、无 logo 的 UI 卡片缩略图，适合 3:2 裁切" `
+  --output public\generated\card-visual.png `
+  --size 1536x1024 `
+  --quality medium `
+  --output-format png
+```
+
+强制只测试原生 image2：
+
+```powershell
+python scripts\image2_asset.py generate `
+  --prompt "test image" `
+  --output output\generated\test.png `
+  --prefer image2
+```
+
+强制走备案通道：
+
+```powershell
+python scripts\image2_asset.py generate `
+  --prompt "test image" `
+  --output output\generated\test.png `
+  --prefer fallback
+```
+
+OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可用。脚本会用当前 Python 运行已安装的 OpenRouter ICU CLI，不使用 `py -3`。
 
 ## image2 最小闭环
 
@@ -51,7 +98,7 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 1. 从参考图中拆出必须生图的资产类别。
 2. 为每个资产或同风格资产组编写可执行提示词。
-3. 实际调用项目指定的 image2 调用入口，产出真实位图文件。
+3. 实际调用 `scripts/image2_asset.py`，优先原生 image2，必要时自动备案 OpenRouter ICU `gpt-image-2`，产出真实位图文件。
 4. 必要时做裁切、切片、透明化、尺寸修正或导出不同槽位版本。
 5. 将生成结果接回前端页面，而不是只停留在“生成了一张图”。
 6. 打开真实页面截图，验证这些资产已经被渲染，而不是停留在本地文件夹。
@@ -120,6 +167,7 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 - 实际生成了哪些资产
 - 每个资产的落地路径
+- 每个资产实际使用的通道：`native-image2` 或 `openrouter-icu-gpt-image-2`
 - 哪些页面区域已经替换为真实位图
 - 哪些区域仍然是代码近似
 - 用什么截图或页面验证方式确认这些资产已经显示
@@ -363,7 +411,7 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 
 - 哪些区域用代码渲染。
 - 生成了哪些图片资产，以及文件路径。
-- 哪些资产是通过真实 image2 得到的。
+- 哪些资产是通过真实 image2 或 OpenRouter ICU `gpt-image-2` 备案通道得到的，并标明实际通道。
 - 使用了什么抠图/去背景方法。
 - 关于尺寸、响应式裁剪或生成风格的假设。
 - 做过哪些页面级审查和验证，尤其是浏览器截图、移动端/桌面端检查、图片尺寸检查、乱码检查、图片融合检查和主要点击路径检查。
