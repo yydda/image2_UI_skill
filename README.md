@@ -2,6 +2,10 @@
 
 把 UI 截图、设计稿、App 参考图交给 Codex，生成可点击的网页或 App demo，并在需要真实视觉资产的位置调用 `image2` 生成位图。
 
+Turn UI screenshots and design references into clickable Codex demos with code-rendered UI and real `image2` visual assets.
+
+一句话：**一张 UI 参考图 -> 可点击 demo + 真正落地的生图资产。**
+
 这个 skill 适合：
 
 - 将 UI 参考图复刻成可预览、可点击的前端 demo
@@ -10,6 +14,12 @@
 - 做手机 App 参考图时，交付带 iOS 外边框的可交互预览
 
 [教程演示视频](https://v.douyin.com/MJLektzxKpM/)
+
+## 为什么不一样
+
+- 不是把整张 UI 烘焙成一张图片，而是保留真实可交互的文字、按钮和布局。
+- 不是只用 CSS/SVG 临摹复杂视觉，而是把主视觉、插画、纹理、产品图等区域交给 `image2`。
+- 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
 
 ## Demo
 
@@ -127,3 +137,5 @@ git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOM
 ```
 
 内部执行规则、资产规划细节和 image2 通道处理逻辑都在 `SKILL.md` 与 `references/` 中，Codex 触发 skill 后会自动读取。
+
+Keywords: Codex skill, image2, image-to-ui, UI screenshot to code, design to code, clickable prototype, app demo, frontend demo, AI assets.
