@@ -1,0 +1,72 @@
+{
+  "regions": [
+    {
+      "id": "header",
+      "x": 0,
+      "y": 0,
+      "width": 1448,
+      "height": 80,
+      "renderStrategy": "mixed",
+      "component": "Header",
+      "critical": true,
+      "maxDiffRatio": 0.04
+    },
+    {
+      "id": "title-area",
+      "x": 34,
+      "y": 100,
+      "width": 940,
+      "height": 120,
+      "renderStrategy": "code",
+      "component": "PageTitle",
+      "critical": true,
+      "maxDiffRatio": 0.04
+    },
+    {
+      "id": "main-order-card",
+      "x": 34,
+      "y": 235,
+      "width": 940,
+      "height": 340,
+      "renderStrategy": "mixed",
+      "component": "OrderInfoCard",
+      "critical": true,
+      "maxDiffRatio": 0.04
+    },
+    {
+      "id": "payment-bar",
+      "x": 34,
+      "y": 857,
+      "width": 940,
+      "height": 116,
+      "renderStrategy": "code",
+      "component": "PaymentSubmitBar",
+      "critical": true,
+      "maxDiffRatio": 0.04
+    },
+    {
+      "id": "right-status-panel",
+      "x": 1006,
+      "y": 135,
+      "width": 408,
+      "height": 810,
+      "renderStrategy": "mixed",
+      "component": "OrderStatusPanel",
+      "critical": true,
+      "maxDiffRatio": 0.05
+    },
+    {
+      "id": "bottom-trust-bar",
+      "x": 34,
+      "y": 995,
+      "width": 1380,
+      "height": 72,
+      "renderStrategy": "mixed",
+      "component": "TrustBar",
+      "critical": false,
+      "maxDiffRatio": 0.06
+    }
+  ],
+  "boxes": [],
+  "textLayers": []
+}

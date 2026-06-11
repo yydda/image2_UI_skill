@@ -1,6 +1,6 @@
 # 女装购物 App 案例拆解
 
-这个案例适合演示 `image-to-ui-skill` 处理“参考设计风格 + 明确要求生成展示海报 / App mockup”时的判断方式：核心目标不是先写结构代码，而是先识别必须真实生图的高影响视觉资产，再决定哪些区域继续用代码承载。
+这个案例适合演示 `moni-ui-skill` 处理“参考设计风格 + 明确要求生成展示海报 / App mockup”时的判断方式：核心目标不是先写结构代码，而是先识别必须真实生图的高影响视觉资产，再决定哪些区域继续用代码承载。
 
 ## 适用场景
 
@@ -33,7 +33,7 @@
 - 主服装图、模特图、商品图、包和鞋等真实视觉素材。
 - 统一的柔粉色系、布光、材质和陈列氛围。
 
-而不是上来先做 HTML/CSS 骨架再声称“已经完成 image2”。
+而不是上来先做 HTML/CSS 骨架再声称“已经完成 image_gen”。
 
 ### 2. 这个案例默认应触发真实生图优先
 
@@ -60,8 +60,8 @@
 正确理解是：
 
 - 页面内部的文字、价格、导航、搜索框优先保留为代码语义。
-- 页面内部的大面积服装图、模特图、包袋图等由 image2 提供真实位图。
-- 外围静物陈列和整体背景氛围也应通过 image2 完成。
+- 页面内部的大面积服装图、模特图、包袋图等由 image_gen 提供真实位图。
+- 外围静物陈列和整体背景氛围也应通过 image_gen 完成。
 
 ## 前期审查示例
 
@@ -79,14 +79,14 @@
 | --- | --- | --- | --- | --- |
 | 双手机布局和基础壳体 | 代码 + 少量位图 | 中等 | 轮廓可代码实现，但展示稿需高质感整合 | 否 |
 | 搜索框、价格、导航、icon | 代码 | 容易 | 必须保持可编辑和可访问 | 否 |
-| 左屏主服装图 | Image2 | 困难 | 服装版型、面料光泽和时尚感高度依赖真实位图 | 否 |
-| 右屏商品卡缩略图 | Image2 | 困难 | 多商品图需要统一风格和光照 | 否 |
-| 包袋、高跟鞋、花瓶、布料 | Image2 | 困难 | 属于陈列型商品摄影 / 静物场景 | 否 |
-| 背景柔光和粉紫氛围 | CSS + Image2 | 中等 | 可混合实现，但海报级效果更适合用真实位图打底 | 否 |
+| 左屏主服装图 | image_gen | 困难 | 服装版型、面料光泽和时尚感高度依赖真实位图 | 否 |
+| 右屏商品卡缩略图 | image_gen | 困难 | 多商品图需要统一风格和光照 | 否 |
+| 包袋、高跟鞋、花瓶、布料 | image_gen | 困难 | 属于陈列型商品摄影 / 静物场景 | 否 |
+| 背景柔光和粉紫氛围 | CSS + image_gen | 中等 | 可混合实现，但海报级效果更适合用真实位图打底 | 否 |
 | 品牌名和营销文案 | 代码 | 容易 | 可编辑文本，不能烘焙进图里 | 否 |
 | 标题字体气质 | 授权字体或开源近似 | 中等 | 高反差衬线标题是核心风格之一 | 是 |
 
-## image2 判断示例
+## image_gen 判断示例
 
 ### 必须真实生图
 
@@ -108,16 +108,16 @@
 - 只搭了双手机布局和粉色渐变背景。
 - 用纯 CSS 画了包和鞋的占位轮廓。
 - 只保留了代码页面，没有真正生成任何服装、模特或配饰位图。
-- 只在文字里写“会使用 image2”，但没有落地真实文件并接入。
+- 只在文字里写“会使用 image_gen”，但没有落地真实文件并接入。
 
 ## 资产清单示例
 
-| id | UI 位置 | 类型 | 代码或 Image2 | CSS 槽位尺寸 | 导出尺寸 | 比例 | 提示词摘要 | 后处理 | 目标路径 |
+| id | UI 位置 | 类型 | 代码或 image_gen | CSS 槽位尺寸 | 导出尺寸 | 比例 | 提示词摘要 | 后处理 | 目标路径 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| fashion-hero-dress | 左屏首屏主图 | product-render | Image2 | 240x300 | 960x1200 | 4:5 | 柔粉缎面裹身裙，棚拍，留白构图 | cutout, resize | `src/assets/generated/fashion-hero-dress.png` |
-| fashion-product-grid | 右屏商品卡组 | thumbnail-set | Image2 | 3 x 96x132 | 1152x1584 | 0.73:1 | 同风格女装与针织衫商品图资产板 | crop, resize | `src/assets/generated/fashion-product-grid.webp` |
-| fashion-still-life-set | 海报外围静物 | still-life | Image2 | 海报两侧装饰 | 1800x1600 | mixed | 粉色包、淡紫花瓶、裸粉高跟鞋、丝绸布料 | crop, transparent-png | `src/assets/generated/fashion-still-life-set.png` |
-| fashion-ambient-bg | 海报背景 | background-plate | Image2 | 16:9 全画面 | 2880x1620 | 16:9 | 柔粉紫渐层、奶油白背景、轻雾化柔光 | compress-webp | `src/assets/generated/fashion-ambient-bg.webp` |
+| fashion-hero-dress | 左屏首屏主图 | product-render | image_gen | 240x300 | 960x1200 | 4:5 | 柔粉缎面裹身裙，棚拍，留白构图 | cutout, resize | `src/assets/generated/fashion-hero-dress.png` |
+| fashion-product-grid | 右屏商品卡组 | thumbnail-set | image_gen | 3 x 96x132 | 1152x1584 | 0.73:1 | 同风格女装与针织衫商品图资产板 | crop, resize | `src/assets/generated/fashion-product-grid.webp` |
+| fashion-still-life-set | 海报外围静物 | still-life | image_gen | 海报两侧装饰 | 1800x1600 | mixed | 粉色包、淡紫花瓶、裸粉高跟鞋、丝绸布料 | crop, transparent-png | `src/assets/generated/fashion-still-life-set.png` |
+| fashion-ambient-bg | 海报背景 | background-plate | image_gen | 16:9 全画面 | 2880x1620 | 16:9 | 柔粉紫渐层、奶油白背景、轻雾化柔光 | compress-webp | `src/assets/generated/fashion-ambient-bg.webp` |
 
 ## 提示词方向示例
 
@@ -164,7 +164,7 @@
 必须避免的误导性表述：
 
 - “已经按参考图复刻”，但没有任何真实时尚素材位图。
-- “已经使用 image2”，但只生成了背景色块。
+- “已经使用 image_gen”，但只生成了背景色块。
 - “已经完成 App mockup”，但服装、包袋和鞋仍是空白占位或代码近似。
 
 ## 页面级审查重点

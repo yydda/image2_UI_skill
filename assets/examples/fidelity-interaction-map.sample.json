@@ -1,0 +1,28 @@
+{
+  "interactions": [
+    {
+      "id": "switch-to-wechat",
+      "targetName": "微信支付",
+      "role": "button",
+      "expectedChange": "payment method selected state switches to wechat"
+    },
+    {
+      "id": "switch-to-alipay",
+      "targetName": "支付宝",
+      "role": "button",
+      "expectedChange": "payment method selected state switches to alipay"
+    },
+    {
+      "id": "toggle-agreement",
+      "targetName": "我已阅读并同意",
+      "role": "checkbox",
+      "expectedChange": "agreement state toggles"
+    },
+    {
+      "id": "submit-payment",
+      "targetName": "去支付",
+      "role": "button",
+      "expectedChange": "local payment feedback appears"
+    }
+  ]
+}

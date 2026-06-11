@@ -1,0 +1,22 @@
+{
+  "name": "moni-ui-skill-tools",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "fidelity:capture": "node scripts/capture-fidelity.mjs",
+    "fidelity:compare": "node scripts/compare-fidelity.mjs",
+    "fidelity:region-diff": "node scripts/compare-region-fidelity.mjs",
+    "fidelity:inspect": "node scripts/inspect-reference-image.mjs",
+    "fidelity:extract": "node scripts/extract-reference-assets.mjs",
+    "fidelity:elements": "node scripts/audit-rendered-elements.mjs",
+    "fidelity:plan": "node scripts/validate-fidelity-plan.mjs",
+    "fidelity:repair": "node scripts/repair-asset.mjs",
+    "fidelity:score": "node scripts/score-asset.mjs"
+  },
+  "dependencies": {
+    "pixelmatch": "7.2.0",
+    "potrace": "2.1.8",
+    "sharp": "0.35.0"
+  }
+}

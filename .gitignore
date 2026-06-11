@@ -1,1 +1,5 @@
 demo/*/screenshots/validate-*.png
+node_modules/
+tmp/
+dist/
+.fidelity-tools/

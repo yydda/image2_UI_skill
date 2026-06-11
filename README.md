@@ -1,15 +1,18 @@
-﻿# Image2 to UI Skill
+﻿# Moni UI Skill
 
-把 UI 截图、设计稿、App 参考图交给 Codex，生成可点击的网页或 App demo，并在需要真实视觉资产的位置调用 `image2` 生成位图。
+把 UI 截图、设计稿、App 参考图交给 Codex，生成可点击的 React 网页或 App demo，并在需要真实视觉资产的位置调用内置 `image_gen` 生成位图。
 
-Turn UI screenshots and design references into clickable Codex demos with code-rendered UI and real `image2` visual assets.
+Turn UI screenshots and design references into clickable Vite + React + TypeScript demos with shadcn components, code-rendered UI, and real built-in `image_gen` visual assets.
 
 一句话：**一张 UI 参考图 -> 可点击 demo + 真正落地的生图资产。**
+
+快速安装和调用见 [QUICK_START.md](./QUICK_START.md)。
 
 这个 skill 适合：
 
 - 将 UI 参考图复刻成可预览、可点击的前端 demo
 - 区分哪些内容应该用代码实现，哪些内容应该生成图片资产
+- 默认交付 Vite + React + TypeScript + shadcn 项目
 - 为首屏主视觉、卡片缩略图、复杂插画、纹理、产品图、抠图等资产生成并接回页面
 - 做手机 App 参考图时，交付带 iOS 外边框的可交互预览
 
@@ -18,7 +21,7 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 ## 为什么不一样
 
 - 不是把整张 UI 烘焙成一张图片，而是保留真实可交互的文字、按钮和布局。
-- 不是只用 CSS/SVG 临摹复杂视觉，而是把主视觉、插画、纹理、产品图等区域交给 `image2`。
+- 不是只用 CSS/SVG 临摹复杂视觉，而是把主视觉、插画、纹理、产品图等区域交给内置 `image_gen`。
 - 最终目标不是一张截图，而是可打开、可点击、可继续改的 demo。
 
 ## Demo
@@ -112,30 +115,190 @@ Turn UI screenshots and design references into clickable Codex demos with code-r
 
 ## 安装
 
+### 从 GitHub 安装
+
 Windows PowerShell：
 
 ```powershell
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "$env:USERPROFILE\.codex\skills\image2_UI_skill"
+git clone https://github.com/zhu-guli326/moni-ui-skill.git "$env:USERPROFILE\.codex\skills\moni-ui-skill"
 ```
 
 macOS / Linux：
 
 ```bash
-git clone https://github.com/zhu-guli326/image2_UI_skill.git "${CODEX_HOME:-$HOME/.codex}/skills/image2_UI_skill"
+git clone https://github.com/zhu-guli326/moni-ui-skill.git "${CODEX_HOME:-$HOME/.codex}/skills/moni-ui-skill"
 ```
 
 安装后重开 Codex，或新开一个会话。
+
+### 从本地源码安装
+
+<!-- local-source-install -->
+
+如果你已经把仓库克隆到本机，例如：
+
+```text
+C:\Users\85013\Documents\MyCode\moni-ui-skill
+```
+
+可以复制到 Codex skills 目录：
+
+```powershell
+New-Item -ItemType Directory -Force "D:\Codex\.codex\skills" | Out-Null
+
+Copy-Item `
+  -Path "C:\Users\85013\Documents\MyCode\moni-ui-skill" `
+  -Destination "D:\Codex\.codex\skills\moni-ui-skill" `
+  -Recurse `
+  -Force
+```
+
+后续修改源码后，同步更新已安装 skill：
+
+```powershell
+Copy-Item `
+  -Path "C:\Users\85013\Documents\MyCode\moni-ui-skill\*" `
+  -Destination "D:\Codex\.codex\skills\moni-ui-skill" `
+  -Recurse `
+  -Force
+```
+
+复制后重开 Codex，或新开一个会话，让 skill 重新加载。
+
+也可以直接运行安装脚本：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-local.ps1
+```
+
+后续同步源码到已安装 skill：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-local.ps1
+```
+
+如需清理目标目录中的旧文件后再同步：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-local.ps1 -Clean
+```
+
+Windows 注意：不要双击 `.ps1` 文件，也不要用系统“打开方式”运行它。请始终用上面的 `powershell -NoProfile -ExecutionPolicy Bypass -File ...` 形式执行，避免 Windows 把脚本当成普通文档打开。
+
+## Bundled Resources
+
+- `assets/templates/vite-react-shadcn/`：默认 Vite + React + TypeScript + shadcn 起始模板，已固定 React/Vite/Tailwind 3 兼容版本并带 `package-lock.json`，新 demo 优先 `npm ci --prefer-offline --no-audit --fund=false`。
+- `demo/moni-react-app/`：React demo，展示 `src/assets/generated` 资产通过 TypeScript import 接入组件。
+- `references/react-shadcn-workflow.md`：React/shadcn 初始化、补齐和组件选择规则。
+- `references/real-project-workflow.md`：真实项目里的组件重构、页面生产和验证流程。
+- `references/high-fidelity-execution-contract.md`：1:1 模式下的页面蓝图、布局 manifest、元素 manifest、图标 inventory、交互 map、区域 diff、DOM 审计和交付状态门禁。
+- `references/fidelity-asset-repair.md`：1:1 高保真截图裁切、素材修复、评分验收和 image_gen 兜底规则。
+- `references/high-fidelity-workflow-observations.md`：真实测试日志观察、外部方案调研和下一轮高保真工作流优化清单。
+- `scripts/inspect-reference-image.mjs`、`scripts/validate-fidelity-plan.mjs`、`scripts/extract-reference-assets.mjs`、`scripts/repair-asset.mjs`、`scripts/score-asset.mjs`、`scripts/capture-fidelity.mjs`、`scripts/compare-fidelity.mjs`、`scripts/compare-region-fidelity.mjs`、`scripts/audit-rendered-elements.mjs`：高保真参考图预检、计划、资产、截图、区域 diff、元素盒子/字体/重叠审计流水线。
+
+验证 React demo 结构：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\demo\moni-react-app\validate.ps1
+```
 
 ## 使用方式
 
 上传 UI 参考图后，在 Codex 里直接说：
 
 ```text
-使用 image-to-ui-skill，参考我上传的图，完成一个可点击预览的 demo。
-需要真实调用 image2 生成必要的位图资产，并把生成结果接回页面。
-技术栈用 HTML/CSS/JS。直接开始，不用先问我。
+使用 moni-ui-skill，参考我上传的图，完成一个可点击预览的 demo。
+需要真实调用内置 image_gen 生成必要的位图资产，并把生成结果接回页面。
+技术栈默认用 Vite + React + TypeScript + shadcn。直接开始，不用先问我。
 ```
 
-内部执行规则、资产规划细节和 image2 通道处理逻辑都在 `SKILL.md` 与 `references/` 中，Codex 触发 skill 后会自动读取。
+内部执行规则、资产规划细节和 image_gen 生图边界都在 `SKILL.md` 与 `references/` 中，Codex 触发 skill 后会自动读取。
 
-Keywords: Codex skill, image2, image-to-ui, UI screenshot to code, design to code, clickable prototype, app demo, frontend demo, AI assets.
+也可以显式用 skill 触发名：
+
+```text
+Use $moni-ui-skill，把这张截图复刻成 Vite + React + TypeScript + shadcn 页面。
+```
+
+## 提示词模板
+
+<!-- prompt-templates -->
+
+### 基础 UI 复刻
+
+<!-- prompt-basic-ui -->
+
+```text
+使用 moni-ui-skill，参考我上传的截图，生成一个可点击预览的 React demo。
+技术栈默认用 Vite + React + TypeScript + shadcn。
+请判断哪些区域用代码实现，哪些区域需要调用内置 image_gen 生成图片资产。
+生成资产放到 src/assets/generated，并通过 React import 接回组件。
+完成后启动本地预览，检查主要点击路径，并提供截图验真。
+```
+
+### 1:1 高保真复刻
+
+```text
+Use $moni-ui-skill，参考这张设计稿做 1:1 高保真 React 页面。
+切图前先运行参考图预检，检查是否含红色批注箭头、水印、浏览器滚动条、下载/缩放浮层、聊天/助手悬浮窗、贴纸或其他非设计元素。
+如果参考图被污染，不要直接切图；先要求干净设计稿，或裁出/遮罩成 tmp/fidelity/clean-reference.png 后再作为 source。
+在写 React 前，先产出并校验：
+tmp/fidelity/page-blueprint.json
+tmp/fidelity/layout-manifest.json
+assets.manifest.json
+tmp/fidelity/element-manifest.json
+tmp/fidelity/icon-inventory.json
+tmp/fidelity/interaction-map.json
+严格按截图统一规划所有资产，包括 logo、支付图标、自定义小图标、线稿、插画、装饰线和背景板。
+所有非通用图标必须 original-crop / repair-crop / vector-rebuild / manual-svg，不要默认用 lucide-react 替代。
+批量裁切/修复/评分后再实现页面。
+完成后用稳定截图跑整页 diff、区域级 diff 和元素级 DOM 审计。
+critical region 的 maxDiffRatio 不要超过 0.06；输出 worst 10 局部区域并优先修最差区域。
+检查关键文字、按钮、价格、状态项的 bounding box、font-size、font-weight、line-height、文本溢出和重叠。
+如果严格门槛没过，最终必须标记 loose gate passed only 或 未达 1:1，并列出失败区域。
+```
+
+### 真实项目页面生产
+
+<!-- prompt-real-project -->
+
+```text
+使用 moni-ui-skill，在当前项目中实现这个页面。
+请先读取现有 package.json、路由、组件目录、样式系统和 shadcn 配置。
+沿用现有项目结构，不要新建孤立 demo。
+需要生成的视觉资产用内置 image_gen，放到 src/assets/generated。
+最后运行项目已有的 typecheck/build/lint，并说明改动文件和验证结果。
+```
+
+### 组件重构
+
+<!-- prompt-component-refactor -->
+
+```text
+使用 moni-ui-skill，重构这个组件，使它更接近我上传的参考图。
+保持现有 props、事件、数据结构和路由语义不变。
+优先使用现有 shadcn/ui、Tailwind token 和 lucide-react 图标。
+如果缺少复杂插图或产品图，再调用内置 image_gen 生成资产并接入。
+完成后运行验证命令，并说明兼容性风险。
+```
+
+### 移动 App 原型
+
+<!-- prompt-mobile-app -->
+
+```text
+使用 moni-ui-skill，把这些 App 截图做成可点击 iOS 风格原型。
+默认 Vite + React + TypeScript + shadcn。
+需要 iOS 手机外边框、状态栏、Dynamic Island 风格开孔和可点击导航。
+多屏之间要能点击跳转，返回/关闭/底部导航都要有反馈。
+图片资产使用内置 image_gen，放到 src/assets/generated。
+最后给出本地预览 URL 和截图。
+```
+
+### 一句话速用版
+
+```text
+Use $moni-ui-skill，参考截图直接做成可点击 React demo，默认 Vite + React + TypeScript + shadcn，真实生图走内置 image_gen，资产接入 src/assets/generated，最后截图验真。
+```
+
+Keywords: Codex skill, moni-ui-skill, Moni UI, image_gen, imagegen, image-to-ui, UI screenshot to code, design to code, Vite, React, TypeScript, shadcn, clickable prototype, app demo, frontend demo, AI assets.

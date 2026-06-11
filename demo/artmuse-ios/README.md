@@ -30,11 +30,11 @@ http://127.0.0.1:4183/
 ## Validate
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File demo/artmuse-ios/validate.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File demo/artmuse-ios/validate.ps1
 ```
 
 ## Asset Notes
 
 All artwork thumbnails are local SVG assets under `assets/` so the demo can run without remote image loading.
 
-This demo does not claim real image2 generation. The artwork visuals are local code/SVG placeholders and should be replaced with true image2 assets when an image2 entrypoint is available.
+This demo does not claim real image_gen generation. The artwork visuals are local code/SVG placeholders and should be replaced with true image_gen assets when the built-in image_gen workflow is used.

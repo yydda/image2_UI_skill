@@ -1,25 +1,27 @@
 ---
-name: image-to-ui-skill
-description: 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, and high-fidelity UI recreation from reference images. 分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须先使用项目指定 image2 入口；如果 image2 不可用或失败，必须自动备案走 OpenRouter ICU gpt-image-2 通道，确保真实生成位图文件。不要用 imagegen 或其他未指定图片工具替代。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
+name: moni-ui-skill
+description: Moni UI Skill 将 UI 截图、设计稿、图片转换为可实现的前端代码和图片资产；also use for image to UI, UI screenshot to code, clickable app demo, mobile prototype, iOS preview, React page implementation, component refactor, and high-fidelity UI recreation from reference images. 默认新建交付使用 Vite + React + TypeScript + shadcn，分析哪些部分应该用代码实现，哪些部分应该生成位图资产。识别图片依赖区域、图标、按钮、字体、背景、首屏视觉、产品渲染图、抠图、透明 PNG 资产，生成提示词并回填到前端 UI 中。涉及生图时必须直接使用系统 imagegen skill 的内置 image_gen 工具，确保真实生成位图文件并接回 UI；不要配置或调用本地生图命令、项目 wrapper、外部中转 API、API key fallback 或自写生图请求。当用户要求做成 App 形式、手机 App、iOS 预览、可点击 App demo 或移动端原型时，必须生成带 iOS 手机外边框的可点击预览，并提供渲染截图。
 ---
 
-# Image to UI Skill
+# Moni UI Skill
 
-使用这个 skill，把 UI 参考图转成可执行的图片资产方案：先分析哪些区域需要生成图片，再生成、后处理，并集成回 UI。
+使用这个 skill，把 UI 参考图转成可执行的图片资产方案：先分析哪些区域需要生成图片，再通过内置 `image_gen` 生成、后处理，并集成回 UI。
 
-## image2 生图优先规则
+## image_gen 生图优先规则
 
-当用户明确要求“调用 image2 生图”“用 image2 复刻”“参考图片做高保真 UI”，或参考图的效果明显依赖摄影、插画、颗粒、半色调、像素噪点、复杂纹理、景深、真实材质、复杂岛屿/地图/角色等位图质感时，必须优先走真实的 image2 位图生成流程，而不是只用 HTML/CSS/SVG 做近似。
+当用户明确要求“调用 Image Gen 生图”“调用 image_gen”“参考图片做高保真 UI”，或参考图的效果明显依赖摄影、插画、颗粒、半色调、像素噪点、复杂纹理、景深、真实材质、复杂岛屿/地图/角色等位图质感时，必须优先走系统 `imagegen` skill 的内置 `image_gen` 位图生成流程，而不是只用 HTML/CSS/SVG 做近似。
+
+如果用户沿用旧的生图叫法，在本 skill 中也统一解释为 Codex 内置 `image_gen` 工具，而不是本地命令、项目脚本或外部 API。
 
 在这类任务里：
 
 - 必须先判断哪些区域属于 **必须真实生图**，哪些区域属于 **必须代码实现**。
-- 必须至少生成并落地一批真实位图资产后，才能声称“已经调用 image2”。
-- 不要把“用 CSS 画了一个相似背景”“用 SVG 拼了插画”“用渐变和噪点近似了风格”描述成已经完成 image2 生图。
-- 如果只是先做代码骨架，必须明确说明“当前仅完成结构 UI，还未真正调用 image2 生成资产”。
+- 必须至少通过内置 `image_gen` 生成并落地一批真实位图资产后，才能声称“已经真实生图”。
+- 不要把“用 CSS 画了一个相似背景”“用 SVG 拼了插画”“用渐变和噪点近似了风格”描述成已经完成生图。
+- 如果只是先做代码骨架，必须明确说明“当前仅完成结构 UI，还未真正调用内置 image_gen 生成资产”。
 - 如果用户要的是高保真复刻，优先生成主视觉、路线插画、卡片缩略图、复杂背景纹理等高影响位图资产，再做 CSS 微调。
 
-以下内容默认视为 **应优先调用 image2**：
+以下内容默认视为 **应优先调用内置 image_gen**：
 
 - 首屏主视觉海景、人物、产品、摄影感场景
 - 带颗粒、半色调、像素噪点、蓝晒/丝网印刷、扫描感的复杂插画
@@ -27,84 +29,47 @@ description: 将 UI 截图、设计稿、图片转换为可实现的前端代码
 - 卡片缩略图、场景图、带统一美术风格的多张主题图
 - 用代码实现会显著降低质感或极难逼近参考图的区域
 
-以下内容默认 **不要交给 image2**：
+以下内容默认 **不要交给 image_gen**：
 
 - 标题、正文、价格、按钮文案、列表文案、标签、导航文字
 - 常规按钮、输入框、卡片、分隔线、底部导航、常规 icon 容器
 - 需要保持可访问、可翻译、可交互的 UI 文本
 
-## image2 调用边界
+## image_gen 调用边界
 
-本 skill 里的 `image2` 指项目指定的 image2 调用入口，不等同于任意图片生成工具。当前 skill 也包含一个明确备案通道：当原生 image2 命令不可用或失败时，必须使用 `scripts/image2_asset.py` 自动转到 OpenRouter ICU `gpt-image-2`，以确保任务能真实落地图片文件。
+本 skill 的唯一生图入口是系统 `imagegen` skill 的内置 `image_gen` 工具。不要再寻找或调用本地生图命令、项目 wrapper、外部中转 API、OpenAI SDK、自写 API 请求或任何需要 API key 的 fallback。
 
 执行时：
 
-- 在任何真实生图前，先按 `references/image2-entrypoint.md` 确认当前项目的 image2 调用入口和备案通道。
-- 优先调用本 skill 的 `scripts/image2_asset.py`，不要自己重写 API 请求。
-- `scripts/image2_asset.py` 会先尝试原生 `image2` 命令或 `IMAGE2_COMMAND` 环境变量；失败后自动调用 `openrouter-icu-image/scripts/openrouter_icu_image.py`，模型固定默认为 `gpt-image-2`。
-- 可以把 OpenRouter ICU `gpt-image-2` 记为“image2 备案通道”或“fallback 通道”，但最终必须说明实际走的是 `native-image2` 还是 `openrouter-icu-gpt-image-2`。
-- 不要把 `imagegen` skill、其它图片生成插件、随机在线生图服务或手写 SDK 请求当作本 skill 的 image2/fallback 通道。
-- 如果原生 image2 和 OpenRouter ICU fallback 都不可用，再停止并说明缺少可用生图入口；不要声称已经生图。
-- 可以继续实现代码 UI 骨架，但必须明确标注“尚未完成真实位图资产生成”，不能把代码近似、CSS/SVG 视觉或其它来源图片写成 image2 结果。
+- 在任何真实生图前，先按 `references/imagegen-entrypoint.md` 确认当前任务是否需要位图资产、哪些区域由代码实现、哪些区域由内置 `image_gen` 生成。
+- 触发生图时，直接使用系统 `imagegen` skill 的默认内置工具模式；不要写 shell 命令、不要检查 API key、不要新增中转脚本。
+- 项目需要使用生成结果时，按 `imagegen` skill 的保存策略，把选定输出从 `$CODEX_HOME/generated_images/...` 复制到当前项目资源目录，再接回页面。
+- 如果内置 `image_gen` 工具不可用，停止并说明缺少可用生图入口；不要自动切到 CLI/API fallback，也不要声称已经生图。
+- 可以继续实现代码 UI 骨架，但必须明确标注“尚未完成真实位图资产生成”，不能把代码近似、CSS/SVG 视觉或其它来源图片写成 image_gen 结果。
 
-### 生图命令
+### 生图执行方式
 
-文本生图：
+内置 `image_gen` 不是项目 CLI。执行真实生图时：
 
-```powershell
-python scripts\image2_asset.py generate `
-  --prompt "为 App 首屏生成一张无文字、无 logo 的高级时尚产品主视觉，留出左侧文案空间，柔和自然光，4:3" `
-  --output public\generated\hero-main.png `
-  --size 1536x1024 `
-  --quality medium `
-  --output-format png
-```
+1. 为每个需要位图的资产写出清晰提示词、目标用途、比例和避让项。
+2. 直接调用系统 `imagegen` skill 的内置 `image_gen` 工具生成图片。
+3. 检查输出是否满足主体、风格、构图、文字避让和 UI 集成要求。
+4. 对项目要使用的图片，复制到项目内的 `assets`、`public`、`src/assets` 或 demo 本地资源目录。
+5. 更新页面代码或样式，让生成图片真实出现在可预览 UI 中。
 
-参考图编辑或多图参考：
+## image_gen 最小闭环
 
-```powershell
-python scripts\image2_asset.py edit `
-  --image reference.png `
-  --prompt "保留参考图主体轮廓和色彩气质，生成无文字、无 logo 的 UI 卡片缩略图，适合 3:2 裁切" `
-  --output public\generated\card-visual.png `
-  --size 1536x1024 `
-  --quality medium `
-  --output-format png
-```
-
-强制只测试原生 image2：
-
-```powershell
-python scripts\image2_asset.py generate `
-  --prompt "test image" `
-  --output output\generated\test.png `
-  --prefer image2
-```
-
-强制走备案通道：
-
-```powershell
-python scripts\image2_asset.py generate `
-  --prompt "test image" `
-  --output output\generated\test.png `
-  --prefer fallback
-```
-
-OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可用。脚本会用当前 Python 运行已安装的 OpenRouter ICU CLI，不使用 `py -3`。
-
-## image2 最小闭环
-
-当任务触发 image2 流程时，至少完成这个闭环：
+当任务触发 image_gen 流程时，至少完成这个闭环：
 
 1. 从参考图中拆出必须生图的资产类别。
 2. 为每个资产或同风格资产组编写可执行提示词。
-3. 实际调用 `scripts/image2_asset.py`，优先原生 image2，必要时自动备案 OpenRouter ICU `gpt-image-2`，产出真实位图文件。
+3. 实际调用内置 `image_gen`，产出真实位图文件。
 4. 必要时做裁切、切片、透明化、尺寸修正或导出不同槽位版本。
 5. 将生成结果接回前端页面，而不是只停留在“生成了一张图”。
 6. 打开真实页面截图，验证这些资产已经被渲染，而不是停留在本地文件夹。
 7. 在最终汇报里列出生成资产路径，并明确说明哪些视觉区域已经改为真实生图。
 
-如果上述 1-7 没完成，不要把任务描述成“已用 image2 完成复刻”；应准确描述为“已完成部分生图”或“仅完成生图准备”。
+如果上述 1-7 没完成，不要把任务描述成“已用 image_gen 完成复刻”；应准确描述为“已完成部分生图”或“仅完成生图准备”。
 
 ## App 形式触发规则
 
@@ -137,50 +102,169 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 - 最终回复必须给出可打开的预览 URL 或入口 HTML 文件路径，并同时给出项目根目录和 demo 目录。
 - 如果因为环境限制暂时只能完成截图或资产准备，必须明确说明“尚未完成网页交付闭环”，不能把它描述成已完成可预览 demo。
 
+## React 默认交付模式
+
+没有现成项目约束时，默认交付为 **Vite + React + TypeScript + shadcn**。把它当成可继续开发的前端实现，而不是一次性静态 HTML 草稿。
+
+Framework priority（框架选择优先级）：
+
+1. 用户明确指定技术栈时，优先遵循用户指定。
+2. 当前 workspace 已有前端项目时，先读取 `package.json`、构建配置、路由、样式系统、组件库和目录约定，沿用现有栈与现有组件，不为单次 UI 任务擅自迁移框架。
+3. 已有项目是 React/Vite/TypeScript 时，直接在现有结构内实现或重构，优先复用现有 `src/components`、`src/pages`、`src/lib`、主题 token、Tailwind/shadcn 配置和路由。
+4. 已有项目不是 React 时，除非用户明确要求迁移，否则按原框架实现，并只保留 image_gen 资产规划和验真规则。
+5. 当前目录没有可用前端项目，或用户要求新建 demo/app 时，创建 Vite + React + TypeScript + shadcn 项目；优先复用 `assets/templates/vite-react-shadcn/` 作为起点。
+6. 只有在用户明确要求极小静态文件、邮件模板、嵌入片段、无构建 HTML，或目标环境不能运行 React 构建时，才退回纯 HTML/CSS/JS。
+
+默认 React 项目结构：
+
+```text
+package.json
+package-lock.json
+index.html
+vite.config.ts
+tsconfig.json
+tsconfig.app.json
+components.json
+src/
+  main.tsx
+  App.tsx
+  vite-env.d.ts
+  index.css
+  assets/
+    generated/
+    original/
+  components/
+    ui/
+    layout/
+    app/
+  pages/
+  lib/
+    utils.ts
+  data/
+```
+
+实现规则：
+
+- 新建项目时使用 React + TypeScript，配置 `@/*` 指向 `src/*`。
+- 新建项目时优先整目录复制 `assets/templates/vite-react-shadcn/`，保留模板里的固定版本 `package.json`、`package-lock.json`、`tsconfig*.json` 和 `src/vite-env.d.ts`；不要把依赖改成 `latest`。
+- 对新 demo 优先执行一次 `npm ci --prefer-offline --no-audit --fund=false`，只有没有 lockfile 时才退回 `npm install --no-audit --fund=false`；不要在修一个配置后反复重新安装。
+- 使用 shadcn 组件承载按钮、卡片、输入框、对话框、标签页、开关、菜单、分隔线、表格和表单等常见 UI；只添加实际需要的组件。
+- 使用 Tailwind/shadcn 主题 token 组织颜色、圆角、阴影和状态，不在组件里散落大量一次性魔法值。
+- 页面级实现放在 `src/pages/`；可复用结构放在 `src/components/app/` 或 `src/components/layout/`；shadcn 生成组件留在 `src/components/ui/`。
+- 数据、导航项、卡片列表、商品列表和模拟内容放在 `src/data/` 或组件附近的 typed 常量中，避免把大量重复 JSX 写死。
+- 图标优先使用项目已有图标库或 `lucide-react`。shadcn 按钮和工具栏里优先使用图标加可访问文本或 `aria-label`。
+- 完成后至少运行类型检查/构建或项目已有验证脚本；再启动本地 dev server，用浏览器检查交互和截图。模板默认使用 `vite --host 0.0.0.0`，优先探活 `http://127.0.0.1:<port>`，浏览器等待状态优先用 `load` 或 `domcontentloaded`。
+
+shadcn 规则：
+
+- 对新 Vite 项目，优先使用 `assets/templates/vite-react-shadcn/`；这个模板已固定 React/Vite/Tailwind 3/shadcn 兼容依赖，包含 lockfile、`moduleResolution: "Bundler"` 和 Vite 类型声明。需要从零初始化时，按 shadcn 官方 Vite 流程初始化 shadcn/ui。
+- 已有 Vite 项目则先检查 `components.json`、Tailwind 配置、`src/lib/utils.ts`、`@/*` alias 和包管理器 lockfile，再在不破坏现有配置的前提下补齐缺失项。
+- 已有 shadcn 配置时，只添加缺失组件，不重复初始化，不覆盖现有 `components.json`、`tailwind.config`、`index.css` 或 `utils.ts`。
+- 如果网络、包管理器或环境限制导致 shadcn CLI 不可用，先说明限制，再用本地 React 组件实现 shadcn 风格的同等 UI 结构；不要谎称已经安装 shadcn。
+- 不要把 shadcn 当作视觉万能钥匙。复杂主视觉、照片、纹理、产品图和插画仍按 image_gen 资产规则处理。
+
+React/shadcn 新建、初始化或补齐细节见 `references/react-shadcn-workflow.md`。
+
+## React Asset Integration
+
+React 项目中，生成资产默认放在 `src/assets/generated/`；用户提供且需要原样保留的参考素材放在 `src/assets/original/`。除非部署路径、CDN 或超大静态资源要求使用 `public/`，不要把项目消费的生成图片散落在根目录或临时目录。
+
+接入规则：
+
+- 通过 TypeScript import 引用项目内资产，例如 `import heroImage from "@/assets/generated/hero-main.webp"`，再传给组件；不要在 JSX 中硬编码本机绝对路径。
+- 需要响应式多尺寸时，为同一资产使用清晰后缀，例如 `hero-main-desktop.webp`、`hero-main-mobile.webp`、`product-card@2x.webp`。
+- 背景图可以用 CSS 变量或 inline style 绑定 imported URL，但仍要有稳定 `aspect-ratio`、`min-height`、`object-fit` 或 `background-size` 约束。
+- 信息图片使用真实 `alt`；纯装饰图使用 `alt=""` 并避免读屏冗余。
+- 大图优先导出 WebP/AVIF；透明、需要 alpha 或边缘细节的资产用 PNG/WebP。避免把未压缩巨图直接接入首屏。
+- 生成图片只存在于 `$CODEX_HOME/generated_images/...` 不算完成；必须复制到项目资产目录并由 React 页面真实引用。
+- 如果重构已有组件，优先保持现有 asset import 风格、命名风格和构建约定。
+
+## Real Development Workflow
+
+这个 skill 可以用于真实项目里的组件重构、页面生产和 UI 资产补齐，但执行方式要从“做 demo”切换成“改现有工程”：
+
+- 先读现有目录、路由、设计系统、组件库、状态管理、数据来源、测试和构建脚本，再决定改哪些文件。
+- 重构组件时保持外部 API、props、事件、数据加载、路由、权限和埋点语义，除非用户明确要求改接口。
+- 新页面应接入现有路由、布局、鉴权边界、错误态、加载态和空态；不要只新增孤立页面文件。
+- 使用真实可编辑文本和组件，不把业务文案、按钮、价格、表单或动态数据烘焙进图片。
+- image_gen 只用于缺失的视觉资产、复杂插画、产品/场景图、纹理、抠图等位图内容；现有品牌素材、用户照片、logo 和精确产品截图优先保留原素材。
+- 真实项目默认要跑项目已有的 lint、typecheck、test、build 或最接近的验证命令；如果跑不了，说明原因和剩余风险。
+- 真实开发交付时，最终说明要列出改动文件、验证命令、预览 URL/截图、生成资产路径，以及与现有系统的集成点。
+
+真实项目改造的发现、实现和验证细节见 `references/real-project-workflow.md`。
+
+## Strict Fidelity Execution
+
+当用户要求 1:1、高保真、像素级复刻，或明确指出 image_gen 生成了不相干图片时，默认进入高保真素材修复流程：**截图裁切 + 本地修复 + 元素清单 + 图标清单 + 评分验收 + image_gen 兜底**。
+
+执行规则：
+
+- 禁止直接开始写 React 页面；必须先产出并校验 `tmp/fidelity/page-blueprint.json`、`tmp/fidelity/layout-manifest.json`、`assets.manifest.json`、`tmp/fidelity/element-manifest.json`、`tmp/fidelity/icon-inventory.json`、`tmp/fidelity/interaction-map.json`。
+- 切图前必须先运行 `node scripts/inspect-reference-image.mjs --source <design.png> --out-dir tmp/fidelity/reference-preflight --fail-on-contamination`。如果参考图含红色批注箭头、斜向水印、浏览器滚动条、下载/缩放浮层、聊天/助手悬浮窗、卡通贴纸或其他非设计稿元素，不得直接从这张图裁切资产。
+- 参考图预检失败时，先要求干净设计稿；如果用户没有干净图，先裁出纯设计画布或手动遮罩污染层，保存为 `tmp/fidelity/clean-reference.png`，再用它作为后续 `--source`。`scripts/extract-reference-assets.mjs` 默认会执行同一预检并拒绝污染源；只有非精确资产排查时才可显式加 `--allow-contaminated-source`，且最终报告必须降级说明。
+- 先运行 `node scripts/validate-fidelity-plan.mjs --blueprint tmp/fidelity/page-blueprint.json --layout tmp/fidelity/layout-manifest.json --assets assets.manifest.json --elements tmp/fidelity/element-manifest.json --icons tmp/fidelity/icon-inventory.json --interactions tmp/fidelity/interaction-map.json --mode strict`；失败时先修计划，不进入实现。
+- 页面蓝图必须描述 canvas、major regions、text layers、asset slots、interaction targets 和 known risks；布局 manifest 必须给每个主要区域绑定组件或实现责任；element manifest 必须记录关键按钮、文本、图标、分割线、价格、状态项的 x/y/width/height/font/selector；icon inventory 必须覆盖所有自定义图标。
+- 1:1 模式下所有非通用图标，包括支付图标、品牌印章、业务图标、状态时间线图标、底部保障图标和页面专属小图标，必须走 `original-crop`、`repair-crop`、`vector-rebuild` 或 `manual-svg`；不得默认用 `lucide-react` 替代。只有真正通用的 chevron、关闭、播放等系统符号可以用图标库。
+- critical region 默认 `maxDiffRatio` 不得高于 `0.06`；如果某个 critical region 设置到 `0.11`、`0.12` 或更宽，计划校验必须失败。局部区域没过时，不允许用整页观感或宽松阈值掩盖。
+- 不假设有 Figma/PSD 源文件；先从用户提供的设计稿截图裁切可保留资产。
+- 精确 logo、支付图标、品牌印章、线稿城市、细线装饰、已有产品截图默认走 `original-crop`、`repair-crop` 或 `vector-rebuild`；不要直接用 `image_gen` 重画。
+- 裁切素材不清晰时，优先用本地修复：`rembg-alpha`、`flat-bg-alpha`、`upscale`、`vectorize-svg` 或 `manual-svg`。
+- 浅色线稿如果透明化会破坏细线，允许 `background-matched`，但必须记录背景色并匹配容器背景。
+- `image_gen-fallback` 只用于非精确资产、缺失装饰、背景扩展或概念插画；每次调用前说明为什么裁切/修复不可用。
+- `qualityGate: exact` 的资产不得使用 `image_gen-fallback`。生图兜底必须有 `rejectIf`，不合格最多重试两次。
+- 如果把资产从 2x/`upscale` 降为 1x/`none`，必须写 `downgradeReason` 和证据；不得无说明降低质量门槛。
+- 使用 `scripts/extract-reference-assets.mjs`、`scripts/repair-asset.mjs`、`scripts/score-asset.mjs`、`scripts/capture-fidelity.mjs`、`scripts/compare-fidelity.mjs`、`scripts/compare-region-fidelity.mjs` 和 `scripts/audit-rendered-elements.mjs` 形成可复跑验收证据。
+- 最终必须跑整页 diff、区域级 diff 和元素级 DOM 审计；元素审计要检查关键 selector 的 bounding box、字体大小、字重、文本溢出和声明的 overlap group。
+- 字体校准必须进入截图循环：先按 element manifest 记录标题、正文、数字、按钮、协议文案等字体预期，再运行 DOM 审计，调整 `font-family`、`font-size`、`font-weight`、`line-height`，直到关键文本层级接近参考图或明确记录不可达原因。
+- 区域级 diff 必须输出 worst 10 regions；修复时优先处理最差的局部区域，例如支付栏、右侧时间线、主卡片图标组、页头标题，而不是只看整体缩略图。
+- 如果严格 1:1 门槛未过，最终状态必须写 `loose gate passed only` 或 `未达 1:1`，并列出失败区域；不要声称 1:1 已完成。
+
+高保真强制执行顺序和四件套 schema 见 `references/high-fidelity-execution-contract.md`。高保真资产 manifest 字段、修复策略、评分规则和生图兜底 prompt 见 `references/fidelity-asset-repair.md`。真实测试中发现的工作流问题、外部方案调研和下一步优化清单见 `references/high-fidelity-workflow-observations.md`。
+
 ## 核心流程
 
 1. 在编辑代码或生成图片之前，先检查用户提供的每一张 UI 参考图。
 2. 将 UI 拆分为：
    - **代码渲染 UI**：布局、文字、按钮、卡片、简单渐变、边框、阴影、开关、表单、图表和重复组件。
    - **图标资产**：优先使用项目已有图标库或 lucide 风格矢量图标。只有当图标是自定义插画式标记，且设计系统无法表达时，才生成图标。
-   - **image-to-ui 图片资产**：照片、插画、产品渲染图、角色、复杂纹理、复杂首屏背景、真实物体、App 展示图、装饰性位图，以及用代码复刻会脆弱或低质的视觉内容。
+   - **Moni UI 图片资产**：照片、插画、产品渲染图、角色、复杂纹理、复杂首屏背景、真实物体、App 展示图、装饰性位图，以及用代码复刻会脆弱或低质的视觉内容。
    - **抠图资产**：需要透明 PNG/WebP、遮罩或去背景的前景人物、产品、物体。
 3. 先输出前期审查文档，说明哪些元素好还原、哪些元素不好还原、哪些需要生成图片、哪些需要用户确认；如果用户已经明确要求“直接做”或“直接复刻”，可以跳过等待，但仍要先在内部完成这一步拆解。
 4. 等用户确认关键问题后，再进入生图；如果用户明确要求“直接继续”，可以用合理假设继续，但要记录假设。
-5. 生成前输出资产清单。清单要包含资产 id、UI 位置、目标槽位尺寸、导出尺寸、宽高比、生成提示词、后处理需求、集成目标，以及“是否必须真实 image2 生图”的判断。
-6. 只生成真正需要位图生成的资产。结构性 UI、可读文字和普通控件继续用代码实现。
+5. 高保真模式下先输出并校验 `page-blueprint.json`、`layout-manifest.json`、`assets.manifest.json`、`element-manifest.json`、`icon-inventory.json`、`interaction-map.json`；普通模式下至少输出资产清单。资产清单要包含资产 id、UI 位置、目标槽位尺寸、导出尺寸、宽高比、`sourceStrategy`、`repairStrategy`、`qualityGate`、后处理需求、集成目标，以及是否允许 `image_gen-fallback`。
+6. 只生成真正需要位图生成的资产。结构性 UI、可读文字和普通控件继续用代码实现；1:1 精确资产先裁切/修复/矢量重建。
 7. 对需要统一风格的一组资产，优先考虑“一次生成统一资产板，再切片导出”的方案，减少风格漂移。
-8. 按需做后处理：裁剪、缩放、去背景、添加 alpha、压缩和尺寸验证。
-9. 将生成资产集成到 UI 中，使用稳定尺寸、`object-fit`、响应式约束、alt 文本和必要的懒加载。
+8. 按需做后处理：裁剪、缩放、去背景、添加 alpha、压缩和尺寸验证；高保真资产必须先运行本地修复与评分脚本，不合格则打回。
+9. 将生成资产集成到 UI 中；React 项目默认复制到 `src/assets/generated/` 并通过 TypeScript import 接入组件，同时使用稳定尺寸、`object-fit`、响应式约束、alt 文本和必要的懒加载。
 10. 给页面补齐可点击行为和跳转逻辑：明显的按钮、链接、返回/关闭、卡片、标签、导航项都要有真实交互；多屏参考图要自动串成可流转原型。
 11. 对完整页面做最终审查：检查尺寸、乱码、排版、响应式、图片嵌入、代码 UI 的融合和交互跳转是否自然。
 12. 将最终页面截图与原始 UI 参考图做差距核对，列出差异，修正后再次截图对比。
-13. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image2 资产。
+13. 如果目标是前端应用，最后用渲染截图和点击路径验证效果，并确认截图里真实出现了 image_gen 资产。
 
-确认 image2 调用入口、判断能否真实生图时，读取 `references/image2-entrypoint.md`。构建资产清单、编写 image-to-ui 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
+确认内置 image_gen 调用边界、判断能否真实生图时，读取 `references/imagegen-entrypoint.md`。构建资产清单、编写 Moni UI 提示词、计算输出尺寸或规划抠图/去背景时，读取 `references/asset-manifest-and-prompts.md`。
 
 当用户要把社媒视觉热点、INS/Pinterest 小趋势或图像创作工具做成可用网页，并关心上线验证、传播数据或技术社区案例时，可读取 `references/hicolor-case-study.md` 作为真实项目参考。
 
 ## 真实生图验真
 
-如果任务涉及 image2，最终必须输出一段“生图验真”信息，至少包含：
+如果任务涉及 image_gen，最终必须输出一段“生图验真”信息，至少包含：
 
 - 实际生成了哪些资产
 - 每个资产的落地路径
-- 每个资产实际使用的通道：`native-image2` 或 `openrouter-icu-gpt-image-2`
+- 每个资产实际使用的工具：`built-in-image_gen`
 - 哪些页面区域已经替换为真实位图
 - 哪些区域仍然是代码近似
 - 用什么截图或页面验证方式确认这些资产已经显示
 
 禁止出现以下误导性表述：
 
-- “已按 image2 流程完成”，但没有任何新生成位图文件
+- “已按 image_gen 流程完成”，但没有任何新生成位图文件
 - “已经生图”，但图片没有接入页面
 - “已经高保真复刻”，但复杂视觉仍全部由 CSS/SVG 临摹
 
 如果页面仍主要依赖代码近似，必须明确写成：
 
-- “当前为结构复刻版，尚未完成真实 image2 资产替换”
+- “当前为结构复刻版，尚未完成真实 image_gen 资产替换”
 - 或 “当前仅首页主视觉已接入生图，其余区域仍待补齐”
 
 ## 前期审查与确认
@@ -194,8 +278,8 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 - **中等难度元素**：需要结合 CSS、图标库、少量图片或响应式裁剪才能还原的区域。
 - **不好还原元素**：复杂插画、真实摄影、人物/产品抠图、复杂 3D/材质、品牌专属图形、参考图中难以复刻的视觉质感。
 - **字体判断**：识别参考图里的标题、正文、数字、按钮和品牌字形气质，判断可用系统字体、项目已有字体、开源 Web 字体，还是必须由用户提供授权字体。
-- **图片生成候选**：需要 image-to-ui 生成的图片资产，包含位置、用途、预估尺寸、是否需要透明背景和生成风险。
-- **image2 优先级**：标明哪些候选资产属于“必须生图”“建议生图”“可用代码近似”。
+- **图片生成候选**：需要 Moni UI 生成的图片资产，包含位置、用途、预估尺寸、是否需要透明背景和生成风险。
+- **image_gen 优先级**：标明哪些候选资产属于“必须生图”“建议生图”“可用代码近似”。
 - **需要确认的问题**：列出继续前必须问用户的问题，例如是否允许风格近似、是否必须保留 logo/产品原图、图片是否可上传外部服务、最终页面尺寸、移动端是否也要还原、是否接受 AI 生成纹理或人物。
 - **下一步建议**：给出推荐执行顺序，例如先确认品牌资产和页面尺寸，再生成首屏图，再生成抠图资产，最后做页面级审查。
 
@@ -208,7 +292,7 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 
 如果用户的问题会影响生成结果、版权/品牌准确性、外部 API 使用或最终页面尺寸，先询问并等待确认。不要为了推进任务而自行假设高风险事项。
 
-如果用户已经表达过“你上次没有真的生图”“不要只做代码近似”“必须调用 image2”，把这视为高优先级纠偏信号：后续执行时应默认优先补足真实位图资产，而不是继续只改 CSS。
+如果用户已经表达过“你上次没有真的生图”“不要只做代码近似”“必须调用 image_gen / Image Gen / 旧生图叫法”，把这视为高优先级纠偏信号：后续执行时应默认优先补足真实位图资产，而不是继续只改 CSS。
 
 ## UI 分析规则
 
@@ -220,7 +304,7 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 - 当前图标库已经覆盖的简单几何图标。
 - CSS 能稳定表达的阴影、发光、模糊、渐变和简单图案背景。
 
-以下内容优先用 image-to-ui 生成：
+以下内容优先用 Moni UI 生成：
 
 - 首屏照片、生活方式图片、编辑风插画、产品场景、吉祥物、头像、真实设备样机、复杂背景底图、手工质感纹理、3D 感物体和装饰性位图组合。
 - UI 依赖某种特定视觉情绪、主体或参考图风格匹配的区域。
@@ -283,7 +367,7 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 - 全宽首屏图在可行时至少按桌面端 2x 宽度生成；如果移动端构图会坏，单独生成移动端裁剪。
 - 透明抠图要保留足够留白容纳阴影，避免过度贴边导致主体被裁掉。
 
-## image-to-ui 提示词
+## Moni UI 提示词
 
 每个图片资产单独写提示词。提示词聚焦单个资产，不要描述整个页面。
 
@@ -314,8 +398,8 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 
 当资产需要透明背景时：
 
-1. 优先使用 image-to-ui/生图模型自带的透明背景、局部编辑、遮罩或独立主体能力。
-2. 如果 image-to-ui 不能直接产出干净透明图，或生成结果边缘质量不够，再选择可用的去背景路径：
+1. 优先使用 Moni UI / 生图模型自带的透明背景、局部编辑、遮罩或独立主体能力。
+2. 如果 Moni UI 不能直接产出干净透明图，或生成结果边缘质量不够，再选择可用的去背景路径：
    - 项目环境中已安装或可安装的本地工具，例如 `rembg`/Pillow。
    - 用户提供凭据或环境已经配置好的 API。
    - 支持背景移除或遮罩编辑的图片编辑/生图工具。
@@ -339,13 +423,13 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 - 按钮、文字和图标保持为真实可访问 UI 元素，可以叠放在图片上或放在图片旁边。
 - 除非任务明确是复刻整张图片 mockup，否则避免生成包含 UI 文字的图片。
 
-如果一个页面声称“使用了 image2 生图”，至少要让以下一种情况发生：
+如果一个页面声称“使用了 image_gen 生图”，至少要让以下一种情况发生：
 
 - 首屏主视觉来自真实生成图
 - 关键插画/缩略图来自真实生成图
 - 路线图/地图主体来自真实生成图
 
-如果这些都没有发生，说明任务仍停留在结构复刻阶段，不应宣称已经完成 image2 复刻。
+如果这些都没有发生，说明任务仍停留在结构复刻阶段，不应宣称已经完成 image_gen 复刻。
 
 ## 交互与跳转
 
@@ -389,7 +473,7 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 5. 对 `必须修` 和高影响 `建议修` 进行修改，再重新截图对比。
 6. 重复“截图 -> 对比 -> 修正 -> 再截图”，直到没有明显影响还原度的问题，或剩余差异受素材、授权、模型质量、时间或用户选择限制。
 
-如果用户曾指出“没有真正调用 image2”，差距核对时必须单独增加一项：
+如果用户曾指出“没有真正调用 image_gen / Image Gen / 旧生图叫法”，差距核对时必须单独增加一项：
 
 - **生图替换率**：当前参考图中最关键的视觉区域，有多少已经从代码近似替换成真实生成位图。
 
@@ -411,9 +495,10 @@ OpenRouter ICU fallback 需要 `OPENROUTER_ICU_API_KEY` 或 `OPENAI_API_KEY` 可
 
 - 哪些区域用代码渲染。
 - 生成了哪些图片资产，以及文件路径。
-- 哪些资产是通过真实 image2 或 OpenRouter ICU `gpt-image-2` 备案通道得到的，并标明实际通道。
+- 哪些资产是通过内置 `image_gen` 真实生成得到的，并标明实际工具为 `built-in-image_gen`。
 - 使用了什么抠图/去背景方法。
 - 关于尺寸、响应式裁剪或生成风格的假设。
 - 做过哪些页面级审查和验证，尤其是浏览器截图、移动端/桌面端检查、图片尺寸检查、乱码检查、图片融合检查和主要点击路径检查。
 - 与原始参考图对比后的主要差距、已修正项、剩余可接受差异，以及迭代了几轮截图核对。
+- 如果用户要求 1:1 或像素级复刻，必须写明交付状态：`strict gate passed`、`loose gate passed only` 或 `未达 1:1`。严格门槛未过时，列出失败区域和下一步修复项，不要说“1:1 完成”。
 - 如果启动了本地预览服务，必须写清楚本地预览 URL、项目根目录、demo 目录和入口 HTML 文件路径，方便用户直接定位文件。

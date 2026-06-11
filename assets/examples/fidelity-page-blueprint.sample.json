@@ -1,0 +1,27 @@
+{
+  "fidelityMode": "screenshot-exact",
+  "canvas": {
+    "width": 1448,
+    "height": 1086,
+    "deviceScaleFactor": 1,
+    "background": "#fffdf8"
+  },
+  "regions": [
+    { "id": "header", "x": 0, "y": 0, "width": 1448, "height": 80, "critical": true },
+    { "id": "title-area", "x": 34, "y": 100, "width": 940, "height": 120, "critical": true },
+    { "id": "main-order-card", "x": 34, "y": 235, "width": 940, "height": 340, "critical": true },
+    { "id": "payment-bar", "x": 34, "y": 857, "width": 940, "height": 116, "critical": true },
+    { "id": "right-status-panel", "x": 1006, "y": 135, "width": 408, "height": 810, "critical": true },
+    { "id": "bottom-trust-bar", "x": 34, "y": 995, "width": 1380, "height": 72, "critical": false }
+  ],
+  "textLayers": [],
+  "assetSlots": [],
+  "interactions": [
+    { "id": "switch-payment-method", "targetName": "支付宝", "role": "button" },
+    { "id": "submit-payment", "targetName": "去支付", "role": "button" }
+  ],
+  "knownRisks": [
+    "Chinese font metrics may differ from the reference screenshot.",
+    "Exact screenshot crops should avoid fractional canvas scale."
+  ]
+}

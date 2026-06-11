@@ -1,0 +1,77 @@
+{
+  "assets": [
+    {
+      "id": "brand-seal",
+      "uiPosition": "top-left brand mark",
+      "type": "custom-icon",
+      "sourceStrategy": "vector-rebuild",
+      "repairStrategy": "vectorize-svg",
+      "transparentRequired": true,
+      "cropBox": { "x": 32, "y": 18, "width": 48, "height": 48 },
+      "slotSize": { "width": 48, "height": 48 },
+      "targetPixels": { "width": 128, "height": 128 },
+      "qualityGate": "exact",
+      "status": "needs-repair",
+      "targetPath": "src/assets/original/extracted/brand-seal.svg"
+    },
+    {
+      "id": "document-search-illustration",
+      "uiPosition": "order card left illustration",
+      "type": "illustration",
+      "sourceStrategy": "repair-crop",
+      "repairStrategy": ["rembg-alpha", "upscale"],
+      "transparentRequired": true,
+      "cropBox": { "x": 55, "y": 292, "width": 158, "height": 148 },
+      "slotSize": { "width": 158, "height": 148 },
+      "targetPixels": { "width": 384, "height": 360 },
+      "qualityGate": "exact",
+      "status": "needs-repair",
+      "targetPath": "src/assets/original/repaired/document-search-illustration.png"
+    },
+    {
+      "id": "wechat-pay-icon",
+      "uiPosition": "selected payment method icon",
+      "type": "brand-payment-icon",
+      "sourceStrategy": "original-crop",
+      "repairStrategy": "none",
+      "transparentRequired": false,
+      "cropBox": { "x": 52, "y": 772, "width": 53, "height": 50 },
+      "slotSize": { "width": 53, "height": 50 },
+      "targetPixels": { "width": 53, "height": 50 },
+      "densityPolicy": "screenshot-exact",
+      "qualityGate": "exact",
+      "status": "needs-repair",
+      "targetPath": "src/assets/original/repaired/wechat-pay-icon.png"
+    },
+    {
+      "id": "company-building-icon",
+      "uiPosition": "order info company cell",
+      "type": "custom-ui-icon",
+      "sourceStrategy": "vector-rebuild",
+      "repairStrategy": ["manual-svg"],
+      "transparentRequired": true,
+      "cropBox": { "x": 252, "y": 390, "width": 25, "height": 25 },
+      "slotSize": { "width": 25, "height": 25 },
+      "targetPixels": { "width": 50, "height": 50 },
+      "qualityGate": "exact",
+      "status": "needs-repair",
+      "targetPath": "src/assets/original/repaired/company-building-icon.svg"
+    },
+    {
+      "id": "city-line-background",
+      "uiPosition": "bottom trust bar decoration",
+      "type": "background-plate",
+      "sourceStrategy": "repair-crop",
+      "repairStrategy": "none",
+      "transparentRequired": false,
+      "backgroundMatched": true,
+      "backgroundColor": "#fbf6ed",
+      "cropBox": { "x": 1030, "y": 1014, "width": 330, "height": 50 },
+      "slotSize": { "width": 330, "height": 50 },
+      "targetPixels": { "width": 660, "height": 100 },
+      "qualityGate": "close",
+      "status": "needs-repair",
+      "targetPath": "src/assets/original/repaired/city-line-background.png"
+    }
+  ]
+}

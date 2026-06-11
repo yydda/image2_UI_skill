@@ -3,8 +3,8 @@
 这份文档只提供 4 类内容：
 
 - 前期审查模板
-- 资产清单模板
-- `image2` 提示词模板
+- React 资产清单模板
+- `image_gen` 提示词模板
 - 页面级检查清单
 
 ## 1. 前期审查模板
@@ -26,7 +26,7 @@
 | 区域 | 建议实现方式 | 难度 | 原因 | 是否需要确认 |
 | --- | --- | --- | --- | --- |
 | 顶部导航 | 代码 | 容易 | 结构清晰，文本可编辑 | 否 |
-| 首屏主视觉 | image2 | 困难 | 依赖摄影/插画质感 | 是 |
+| 首屏主视觉 | image_gen | 困难 | 依赖摄影/插画质感 | 是 |
 | logo | 原素材 | 不建议直接生成 | 需要品牌一致性 | 是 |
 
 ### 图片资产候选
@@ -46,16 +46,17 @@
 
 - `容易`：代码或现有图标库即可完成
 - `中等`：需要精细 CSS、裁剪或少量图片辅助
-- `困难`：依赖 `image2`、抠图或复杂质感
+- `困难`：依赖 `image_gen`、抠图或复杂质感
 - `不建议直接生成`：logo、商标、用户专属照片、精确产品截图
 
 ## 2. 资产清单模板
 
 生成前先列资产清单，保持每个资产可追踪：
 
-| id | UI 位置 | 类型 | 代码或 image2 | CSS 槽位尺寸 | 导出尺寸 | 比例 | 后处理 | 目标路径 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| hero-main | 首屏主视觉 | hero-image | image2 | 100vw x 60vh | 2880x1600 | 1.8:1 | crop, compress-webp | src/assets/generated/hero-main.webp |
+| id | UI 位置 | 类型 | source strategy | repair strategy | transparent required | crop box | slot size | target pixels | quality gate | 目标路径 | React import | 接入组件 | alt |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| hero-main | 首屏主视觉 | hero-image | image_gen-fallback | none | false | n/a | 100vw x 60vh | 2880x1600 | concept | src/assets/generated/hero-main.webp | heroMainImage | HeroSection | 装饰性主视觉 |
+| brand-seal | 顶部品牌印章 | custom-icon | vector-rebuild | vectorize-svg | true | 32,18,48,48 | 48x48 | 128x128 | exact | src/assets/original/repaired/brand-seal.svg | brandSeal | Header | 品牌印章 |
 
 常用类型：
 
@@ -77,7 +78,93 @@
 - `compress-webp`
 - `mobile-crop`
 
-## 3. image2 提示词模板
+高保真 source strategy：
+
+- `original-crop`：从用户设计稿裁切原区域，不做语义重画
+- `repair-crop`：裁切后做去背景、放大、锐化或背景匹配
+- `vector-rebuild`：矢量化或手写 SVG 重建精确线稿/图标
+- `image_gen-fallback`：只用于非精确缺失资产、背景扩展或概念插画
+- `code`：由 React/CSS/SVG 代码实现
+
+高保真 repair strategy：
+
+- `none`
+- `flat-bg-alpha`
+- `rembg-alpha`
+- `upscale`
+- `vectorize-svg`
+- `manual-svg`
+
+`quality gate`：
+
+- `exact`：不得使用 `image_gen-fallback`
+- `close`：允许少量边缘/纹理差异，但主体、构图和色板必须接近
+- `concept`：只要求满足用途和风格
+
+React 接入字段：
+
+- `目标路径`：默认 `src/assets/generated/<asset-id>.<ext>`；原始用户素材放 `src/assets/original/`。
+- `React import`：使用 camelCase 名称，例如 `heroMainImage`、`productCutoutMobile`。
+- `接入组件`：写清楚图片最终进入哪个组件或页面，例如 `HeroSection`、`ProductCard`、`OnboardingScreen`。
+- `alt`：信息图写语义 alt；纯装饰图写 `alt=""` 或说明为装饰性。
+- `响应式版本`：需要桌面/移动不同裁剪时，在备注或后处理里列出 `desktop`、`mobile`、`@2x` 文件。
+
+## 2.1 资产命名规范
+
+<!-- asset-naming-rules -->
+
+生成资产必须使用可读、稳定、可追踪的 kebab-case 文件名：
+
+```text
+<slot>-<subject>-<variant>.<ext>
+```
+
+常用槽位：
+
+- `hero`
+- `product`
+- `card`
+- `avatar`
+- `background`
+- `texture`
+- `cutout`
+- `empty-state`
+- `onboarding`
+
+常用变体：
+
+- `desktop`
+- `mobile`
+- `light`
+- `dark`
+- `transparent`
+- `01`, `02`, `03` for ordered sets
+- `2x` only when the project already uses density suffixes
+
+示例：
+
+```text
+src/assets/generated/hero-dashboard-desktop.webp
+src/assets/generated/hero-dashboard-mobile.webp
+src/assets/generated/product-phone-cutout-transparent.png
+src/assets/generated/card-feature-01.webp
+src/assets/generated/onboarding-illustration-02.png
+```
+
+每个最终接入 React 的生成资产都要记录：
+
+| 字段 | 示例 |
+| --- | --- |
+| asset id | `hero-dashboard` |
+| source prompt | `B2B dashboard hero visual...` |
+| saved path | `src/assets/generated/hero-dashboard-desktop.webp` |
+| React import | `heroDashboardDesktop` |
+| used component | `HeroSection` |
+| role | `decorative` 或 `informative` |
+| alt | `Dashboard analytics preview` 或 `""` |
+| actual tool | `built-in-image_gen` |
+
+## 3. image_gen 提示词模板
 
 每个资产单独写提示词，不要把整个页面一起描述进一张图里。
 

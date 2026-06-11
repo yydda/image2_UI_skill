@@ -36,13 +36,13 @@ http://127.0.0.1:4190/
 ## Validate
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File demo/marble-note/validate.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File demo/marble-note/validate.ps1
 ```
 
 The validation checks page startup, screenshot creation, the cover/home/detail flow, all added logical pages (`folder`, `search`, `create`, `schedule`, `settings`), iOS frame details, local images, and broken image count.
 
 ## Asset Notes
 
-This demo uses local code/SVG/CSS artwork placeholders. It does not claim real image2 generation because no confirmed image2 entrypoint is available in this environment.
+This demo uses local code/SVG/CSS artwork placeholders. It does not claim real image_gen generation because the original demo predates the built-in image_gen workflow.
 
-See `image2-asset-plan.md` for the pending real image2 asset breakdown and prompts.
+See `imagegen-asset-plan.md` for the pending real image_gen asset breakdown and prompts.
