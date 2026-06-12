@@ -11,6 +11,8 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $results = [System.Collections.Generic.List[object]]::new()
 $toolRoot = Join-Path $root ".fidelity-tools"
+$isWindows = $env:OS -eq "Windows_NT"
+$npmCommand = if ($isWindows) { "npm.cmd" } else { "npm" }
 $config = [ordered]@{
   toolRoot = $toolRoot
   pythonPath = $null
@@ -58,12 +60,12 @@ try {
     Add-Result "node" $true ((node --version) -join " ")
   }
 
-  if (-not (Test-Command "npm")) {
+  if (-not (Test-Command $npmCommand)) {
     Add-Result "npm" $false "npm is required to install sharp and pixelmatch."
   } elseif ($CheckOnly) {
     Add-Result "npm" $true "npm available; skipped npm install because -CheckOnly was set."
   } else {
-    npm install --ignore-scripts --no-audit --fund=false
+    & $npmCommand install --ignore-scripts --no-audit --fund=false
     Add-Result "npm" $true "Installed Node fidelity dependencies from package-lock.json/package.json."
   }
 

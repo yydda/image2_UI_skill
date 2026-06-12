@@ -106,6 +106,8 @@ Assert-File "assets\examples\fidelity-icon-inventory.sample.json" | Out-Null
 Assert-File "assets\examples\fidelity-interaction-map.sample.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\package.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\package-lock.json" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\validate.cmd" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\dev.cmd" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\components.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\tsconfig.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\tsconfig.app.json" | Out-Null
@@ -113,6 +115,8 @@ Assert-File "assets\templates\vite-react-shadcn\src\App.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\vite-env.d.ts" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\scripts\check-frontend-architecture.mjs" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\scripts\ensure-project-deps.mjs" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\scripts\start-dev-server.cmd" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\scripts\start-dev-server.mjs" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\app\AppShell.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\app\routes.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\pages\HomePage.tsx" | Out-Null
@@ -163,6 +167,7 @@ $themeScript = Get-Content -LiteralPath (Join-Path $root "scripts\calibrate-them
 $diagnoseScript = Get-Content -LiteralPath (Join-Path $root "scripts\diagnose-fidelity-diff.mjs") -Raw -Encoding UTF8
 $repairQueueScript = Get-Content -LiteralPath (Join-Path $root "scripts\build-repair-queue.mjs") -Raw -Encoding UTF8
 $loopScript = Get-Content -LiteralPath (Join-Path $root "scripts\run-fidelity-loop.mjs") -Raw -Encoding UTF8
+$scaffoldScript = Get-Content -LiteralPath (Join-Path $root "scripts\scaffold-react-project.mjs") -Raw -Encoding UTF8
 $marbleReadme = Get-Content -LiteralPath (Join-Path $root "demo\marble-note\README.md") -Raw -Encoding UTF8
 $artmuseReadme = Get-Content -LiteralPath (Join-Path $root "demo\artmuse-ios\README.md") -Raw -Encoding UTF8
 $rootPackagePath = Join-Path $root "package.json"
@@ -171,6 +176,7 @@ $templatePackagePath = Join-Path $root "assets\templates\vite-react-shadcn\packa
 $templatePackageLockPath = Join-Path $root "assets\templates\vite-react-shadcn\package-lock.json"
 $templateTsconfigPath = Join-Path $root "assets\templates\vite-react-shadcn\tsconfig.json"
 $templateTsconfigAppPath = Join-Path $root "assets\templates\vite-react-shadcn\tsconfig.app.json"
+$templateStartDevPath = Join-Path $root "assets\templates\vite-react-shadcn\scripts\start-dev-server.mjs"
 $demoPackagePath = Join-Path $root "demo\moni-react-app\package.json"
 $rootPackage = Get-Content -LiteralPath $rootPackagePath -Raw -Encoding UTF8 | ConvertFrom-Json
 $rootPackageLock = Get-Content -LiteralPath $rootPackageLockPath -Raw -Encoding UTF8
@@ -179,6 +185,7 @@ $demoPackage = Get-Content -LiteralPath $demoPackagePath -Raw -Encoding UTF8 | C
 $templatePackageLock = Get-Content -LiteralPath $templatePackageLockPath -Raw -Encoding UTF8
 $templateTsconfig = Get-Content -LiteralPath $templateTsconfigPath -Raw -Encoding UTF8
 $templateTsconfigApp = Get-Content -LiteralPath $templateTsconfigAppPath -Raw -Encoding UTF8
+$templateStartDevScript = Get-Content -LiteralPath $templateStartDevPath -Raw -Encoding UTF8
 
 function Assert-NoLatestDependency($package, $label) {
   foreach ($sectionName in @("dependencies", "devDependencies")) {
@@ -252,9 +259,11 @@ Assert-True ($skill.Contains("0.06")) "SKILL.md should cap critical region diff 
 Assert-True ($skill.Contains("lucide-react")) "SKILL.md should restrict lucide replacement for non-generic icons"
 Assert-True ($skill.Contains("loose gate passed only")) "SKILL.md should define strict fidelity delivery status"
 Assert-True ($skill.Contains("Dynamic Island")) "SKILL.md should keep iOS app preview requirements"
-Assert-True ($skill.Contains("npm ci --prefer-offline --no-audit --fund=false")) "SKILL.md should prefer deterministic npm ci for fresh demos"
+Assert-True ($skill.Contains("cmd /c npm.cmd ci --prefer-offline --no-audit --fund=false")) "SKILL.md should prefer deterministic npm.cmd ci for fresh demos"
 Assert-True ($skill.Contains("package-lock.json")) "SKILL.md should require preserving the template lockfile"
-Assert-True ($skill.Contains("vite --host 0.0.0.0")) "SKILL.md should document the local dev host used by the template"
+Assert-True ($skill.Contains("start-dev-server.mjs") -and $skill.Contains("npm.cmd")) "SKILL.md should document the safe Vite dev server helper"
+Assert-True ($skill.Contains("Windows Node Toolchain Guard")) "SKILL.md should include the Windows Node toolchain guard"
+Assert-True ($skill.Contains("Start-Process npm") -and $skill.Contains('bare `npm run dev`')) "SKILL.md should forbid unsafe Windows Node command forms"
 Assert-True ($skill.Contains("Strict Fidelity Execution")) "SKILL.md should define the high-fidelity execution gate"
 Assert-True ($skill.Contains("image_gen-fallback")) "SKILL.md should define image_gen as fallback for high-fidelity assets"
 Assert-True ($skill.Contains("qualityGate: exact")) "SKILL.md should block image_gen fallback for exact assets"
@@ -307,6 +316,12 @@ Assert-True ($templatePackage.scripts.dev.Contains("--host 0.0.0.0")) "React tem
 Assert-True ($templatePackage.scripts.preview.Contains("--host 0.0.0.0")) "React template preview script should bind to 0.0.0.0"
 Assert-True ($templatePackage.scripts."architecture:check".Contains("check-frontend-architecture.mjs")) "React template should expose architecture:check"
 Assert-True ($templatePackage.scripts."deps:ensure".Contains("ensure-project-deps.mjs")) "React template should expose deps:ensure"
+Assert-True ($templatePackage.scripts."dev:safe".Contains("start-dev-server.mjs")) "React template should expose safe dev server helper"
+Assert-True ($templatePackage.scripts.validate.Contains("architecture:check") -and $templatePackage.scripts.validate.Contains("typecheck") -and $templatePackage.scripts.validate.Contains("build")) "React template should expose validate script"
+Assert-True ($templateStartDevScript.Contains('"npm.cmd"')) "Safe dev server helper should call npm.cmd on Windows"
+Assert-True ($templateStartDevScript.Contains("shell: false")) "Safe dev server helper should disable shell execution"
+Assert-True ($templateStartDevScript.Contains("windowsHide: true")) "Safe dev server helper should hide Windows helper windows"
+Assert-True ($templateStartDevScript.Contains("preferredUrl")) "Safe dev server helper should reuse an existing preferred dev server before choosing another port"
 Assert-True ($templatePackage.devDependencies.tailwindcss -eq "3.4.17") "React template should pin Tailwind 3.4.17"
 Assert-True ($templatePackage.devDependencies.vite -eq "5.4.11") "React template should pin Vite 5.4.11"
 Assert-True ($templatePackage.dependencies.react -eq "18.3.1") "React template should pin React 18.3.1"
@@ -371,8 +386,10 @@ Assert-True ($readme.Contains("prompt-mobile-app")) "README should include mobil
 Assert-True ($readme.Contains("scripts\install-local.cmd")) "README should mention Windows cmd install wrapper"
 Assert-True ($readme.Contains("scripts\sync-local.cmd")) "README should mention Windows cmd sync wrapper"
 Assert-True ($readme.Contains("demo\moni-react-app\validate.cmd")) "README should mention React demo cmd validator"
+Assert-True ($readme.Contains("npm.cmd") -and $readme.Contains("start-dev-server.mjs")) "README should mention safe Windows Node command usage"
 Assert-True ($quickStart.Contains("scripts\install-local.cmd")) "QUICK_START should mention Windows cmd install wrapper"
 Assert-True ($quickStart.Contains("scripts\sync-local.cmd")) "QUICK_START should mention Windows cmd sync wrapper"
+Assert-True ($quickStart.Contains("npm.cmd") -and $quickStart.Contains("dev.cmd")) "QUICK_START should mention safe Windows Node command usage"
 Assert-True ($marbleReadme.Contains("serve-static.mjs") -and -not $marbleReadme.Contains("python -m http.server")) "Marble demo README should use the Node static server"
 Assert-True ($artmuseReadme.Contains("serve-static.mjs") -and -not $artmuseReadme.Contains("python -m http.server")) "ArtMuse demo README should use the Node static server"
 Assert-True ($skill.Contains("Windows Script Execution Guard")) "SKILL should include Windows script execution guard"
@@ -430,6 +447,7 @@ Assert-True ($openaiYaml.Contains("generate-reuse-review")) "agents/openai.yaml 
 Assert-True ($openaiYaml.Contains("grid/flex/block")) "agents/openai.yaml should mention box model planning"
 Assert-True ($openaiYaml.Contains("src/theme/font-faces.css")) "agents/openai.yaml should mention font-face CSS"
 Assert-True ($openaiYaml.Contains("alpha")) "agents/openai.yaml should mention translucent assets"
+Assert-True ($openaiYaml.Contains("npm.cmd") -and $openaiYaml.Contains("start-dev-server.mjs")) "agents/openai.yaml should mention safe Windows Node command usage"
 Assert-True ($readme.Contains("Vite + React + TypeScript + shadcn")) "README should mention the default React stack"
 Assert-True ($assetReference.Contains("React import")) "asset manifest reference should include React import guidance"
 Assert-True ($assetReference.Contains("src/assets/generated/")) "asset manifest reference should include generated asset path guidance"
@@ -462,6 +480,8 @@ Assert-True ($routingReference.Contains("Product Design")) "routing reference sh
 Assert-True ($routingReference.Contains("Codex Browser")) "routing reference should define Browser reuse"
 Assert-True ($routingReference.Contains("check-frontend-architecture.mjs")) "routing reference should mention architecture checker"
 Assert-True ($routingReference.Contains("diff-diagnosis.json")) "routing reference should mention diff diagnosis"
+Assert-True ($routingReference.Contains("start-dev-server.mjs")) "routing reference should mention safe dev server startup"
+Assert-True ($scaffoldScript.Contains("scripts/check-frontend-architecture.mjs") -and $scaffoldScript.Contains("scripts/start-dev-server.mjs")) "Scaffold should overlay safe architecture and dev-server helpers"
 Assert-True ($architectureReference.Contains("src/components/primitives")) "architecture contract should define primitives directory"
 Assert-True ($architectureReference.Contains("src/components/fidelity")) "architecture contract should define fidelity directory"
 Assert-True ($architectureReference.Contains("tokens.css")) "architecture contract should define tokens"

@@ -13,7 +13,7 @@
 2. For new demos, run `node scripts/scaffold-react-project.mjs --target <project>`. This prefers the latest foundation template and falls back to the bundled template only when foundation is unavailable.
 3. Keep project-specific work in `src/pages`, `src/data`, and `src/assets`.
 4. Prefer foundation primitives, layout, fidelity helpers, and tokens before creating one-off components.
-5. Run `npm run architecture:check`, typecheck/build, screenshot QA, diff, and DOM audit as required by the task.
+5. On Windows, run `cmd /c validate.cmd`, or use `cmd /c npm.cmd run architecture:check`, `cmd /c npm.cmd run typecheck`, and `cmd /c npm.cmd run build`; then run screenshot QA, diff, and DOM audit as required by the task. Do not use bare `npm`, `vite`, `tsc`, `playwright`, or `Start-Process npm`.
 
 ## End Of Task
 

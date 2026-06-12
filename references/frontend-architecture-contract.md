@@ -86,12 +86,12 @@ High-fidelity work must still be engineered as CSS boxes, not as a static screen
 
 Every new project must pass:
 
-```powershell
-npm run typecheck
-npm run build
-npm run architecture:check
-npm run deps:ensure
+```bat
+cmd /c npm.cmd run deps:ensure
+cmd /c validate.cmd
 ```
+
+If `validate.cmd` is unavailable, use `cmd /c npm.cmd run architecture:check`, `cmd /c npm.cmd run typecheck`, and `cmd /c npm.cmd run build`. New projects must include `validate.cmd`, `dev.cmd`, and `scripts/start-dev-server.mjs` so Windows never needs to resolve Node `.ps1` shims.
 
 For high-fidelity work, also run the Moni fidelity scripts from the skill root.
 

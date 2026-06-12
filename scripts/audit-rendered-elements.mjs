@@ -317,7 +317,7 @@ function loadPlaywright() {
   }
 
   throw new Error(
-    "Playwright is required for element auditing. Install it in the target project with `npm install -D playwright` and, if needed, `npx playwright install chromium`.",
+    "Playwright is required for element auditing. On Windows install it in the target project with `cmd /c npm.cmd install -D playwright` and, if needed, `cmd /c npx.cmd playwright install chromium`.",
   )
 }
 

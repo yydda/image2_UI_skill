@@ -16,7 +16,7 @@ Default stack:
 
 Prefer the latest `moni-ui-foundation` template for new demos or fresh apps. The bundled template at `assets/templates/vite-react-shadcn/` is the offline fallback and seed copy.
 
-The foundation template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, `src/theme/font-faces.css`, `src/assets/fonts/`, theme presets, primitives, fidelity components, and `architecture:check`; and runs Vite with `--host 0.0.0.0`.
+The foundation template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, `src/theme/font-faces.css`, `src/assets/fonts/`, theme presets, primitives, fidelity components, `architecture:check`, `.cmd` Windows wrappers, and `scripts/start-dev-server.mjs` for safe Vite startup.
 
 The architecture contract is mandatory for new demos. Read `references/frontend-architecture-contract.md` before changing the template shape. Style can change through `src/theme/tokens.css`, `src/theme/themes/*.css`, and page implementation; do not move shadcn primitives, asset directories, app shell, or validation scripts for a one-off page.
 
@@ -25,14 +25,14 @@ For a fresh demo:
 1. Run `node scripts/sync-foundation.mjs`.
 2. Run `node scripts/scaffold-react-project.mjs --target <target>`. Use `--no-foundation` only for offline/bundled fallback.
 3. Edit project files and source code in one pass.
-4. Run `npm run deps:ensure`; if that script is unavailable, run `npm ci --prefer-offline --no-audit --fund=false`.
-5. Run `npm run architecture:check`.
-6. Run `npm run build` or `npm run typecheck`.
-7. Start `npm run dev -- --port <free-port>` and open `http://127.0.0.1:<port>`.
+4. On Windows, run `cmd /c npm.cmd run deps:ensure`; if that script is unavailable, run `cmd /c npm.cmd ci --prefer-offline --no-audit --fund=false`.
+5. Run `cmd /c validate.cmd`, or run `cmd /c npm.cmd run architecture:check`, `cmd /c npm.cmd run typecheck`, and `cmd /c npm.cmd run build`.
+6. Start Vite with `node scripts\start-dev-server.mjs --port <free-port>` or `cmd /c dev.cmd --port <free-port>`, then open the printed `http://127.0.0.1:<port>` URL. If Windows/npm swallows stdout on first launch, read the URL from `tmp/dev-server.json`.
+7. Do not use `Start-Process npm`, bare `npm run dev`, direct `vite`, direct `tsc`, direct `playwright`, or `node_modules\.bin\*.ps1` paths on Windows; they may trigger the `.ps1` Open With dialog.
 8. In browser automation, prefer `load` or `domcontentloaded` waits; avoid relying on `networkidle`.
 9. After delivery, run `node scripts/generate-reuse-review.mjs --project <target>` from the skill root and report the reusable candidates.
 
-Only run `npm install` when no lockfile exists or the project is intentionally changing dependencies.
+Only run dependency installation when no lockfile exists or the project is intentionally changing dependencies; on Windows use `cmd /c npm.cmd install --no-audit --fund=false` rather than bare `npm install`.
 
 ## Existing Project Checks
 

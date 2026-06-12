@@ -39,7 +39,7 @@ Moni UI Skill 是编排 skill，不是单体万能转换器。它负责截图还
 执行要求：
 
 - 新建项目先运行 `node scripts/sync-foundation.mjs`，再使用 `node scripts/scaffold-react-project.mjs --target <target>`；脚本默认优先使用 `moni-ui-foundation` 最新模板，foundation 不可用时才 fallback 到内置 `assets/templates/vite-react-shadcn/`。不要临时手搓工程结构。
-- 所有新建项目必须保留 `architecture:check` 和 `deps:ensure`，并在交付前运行 `npm run architecture:check` 或 `node scripts/check-frontend-architecture.mjs --project <project>`。
+- 所有新建项目必须保留 `architecture:check`、`deps:ensure`、`validate.cmd` 和 `dev.cmd`，并在交付前运行 `cmd /c validate.cmd`、`cmd /c npm.cmd run architecture:check` 或 `node scripts/check-frontend-architecture.mjs --project <project>`。
 - `src/components/ui/` 只放 shadcn 基础组件；复用 UI primitives 放 `src/components/primitives/`；布局放 `src/components/layout/`；高保真测量组件放 `src/components/fidelity/`。
 - 颜色、字号、字重、行高、间距、圆角、阴影、边框、z-index 等通过 `src/theme/tokens.css` 和 `src/theme/themes/*.css` 表达，不在页面里散落大量一次性颜色和魔法值。
 - 字体入口固定为 `src/theme/font-faces.css`，字体文件放 `src/assets/fonts/`；需要联网找字体时，只使用官方或开源来源，最终自托管后通过 CSS `@font-face` 引入。
@@ -222,13 +222,13 @@ src/
 
 - 新建项目时使用 React + TypeScript，配置 `@/*` 指向 `src/*`。
 - 新建项目时先运行 `node scripts/sync-foundation.mjs`，再运行 `node scripts/scaffold-react-project.mjs --target <target>`；仅在 foundation 不可用或用户要求离线时使用 `--no-foundation` 或整目录复制 `assets/templates/vite-react-shadcn/`。保留模板里的固定版本 `package.json`、`package-lock.json`、`tsconfig*.json`、`src/vite-env.d.ts`、`architecture:check` 和 `src/theme/`；不要把依赖改成 `latest`。
-- 对新 demo 优先执行 `npm run deps:ensure`；如果项目没有该脚本，再执行一次 `npm ci --prefer-offline --no-audit --fund=false`，只有没有 lockfile 时才退回 `npm install --no-audit --fund=false`；不要在修一个配置后反复重新安装。
+- 对新 demo 优先执行 `cmd /c npm.cmd run deps:ensure`；如果项目没有该脚本，再执行一次 `cmd /c npm.cmd ci --prefer-offline --no-audit --fund=false`，只有没有 lockfile 时才退回 `cmd /c npm.cmd install --no-audit --fund=false`；不要在修一个配置后反复重新安装。
 - 使用 shadcn 组件承载按钮、卡片、输入框、对话框、标签页、开关、菜单、分隔线、表格和表单等常见 UI；只添加实际需要的组件。
 - 使用 Tailwind/shadcn 主题 token 组织颜色、圆角、阴影和状态，不在组件里散落大量一次性魔法值。
 - 页面级实现放在 `src/pages/`；可复用 controls 放在 `src/components/primitives/`；页面布局放在 `src/components/layout/`；高保真测量/资产槽位组件放在 `src/components/fidelity/`；shadcn 基础组件留在 `src/components/ui/`。
 - 数据、导航项、卡片列表、商品列表和模拟内容放在 `src/data/` 或组件附近的 typed 常量中，避免把大量重复 JSX 写死。
 - 图标优先使用项目已有图标库或 `lucide-react`。shadcn 按钮和工具栏里优先使用图标加可访问文本或 `aria-label`。
-- 完成后至少运行 `npm run architecture:check`、类型检查/构建或项目已有验证脚本；再启动本地 dev server，用浏览器检查交互和截图。模板默认使用 `vite --host 0.0.0.0`，优先探活 `http://127.0.0.1:<port>`，浏览器等待状态优先用 `load` 或 `domcontentloaded`。
+- 完成后至少运行 `cmd /c npm.cmd run architecture:check`、`cmd /c npm.cmd run typecheck`、`cmd /c npm.cmd run build` 或项目已有 `.cmd` 验证脚本；再启动本地 dev server，用浏览器检查交互和截图。模板默认提供 `dev.cmd` 和 `node scripts\start-dev-server.mjs --port <port>`，优先使用它们启动 Vite 并探活 `http://127.0.0.1:<port>`；浏览器等待状态优先用 `load` 或 `domcontentloaded`。
 
 shadcn 规则：
 
@@ -258,6 +258,30 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\path\to\script.ps1
 ```
 
 If Windows shows "Choose an app to open this .ps1 file", cancel the dialog and rerun the command through `.cmd` or `powershell -File`.
+
+### Windows Node Toolchain Guard
+
+PowerShell can resolve Node package commands such as `npm`, `npx`, `vite`, `tsc`, `tailwind`, or `playwright` to `.ps1` shim files. Never launch these commands with `Start-Process`, ShellExecute, Explorer, or any bare executable lookup that may open the `.ps1` shim and trigger the Windows "Choose an app to open this .ps1 file" dialog.
+
+Use one of these safe forms instead:
+
+```bat
+cmd /c npm.cmd run deps:ensure
+cmd /c npm.cmd run architecture:check
+cmd /c npm.cmd run typecheck
+cmd /c npm.cmd run build
+cmd /c npx.cmd playwright install chromium
+.\validate.cmd
+.\dev.cmd --port 5173
+```
+
+For a generated Vite React project, prefer the template helper:
+
+```bat
+node scripts\start-dev-server.mjs --port 5173
+```
+
+The helper starts Vite through `cmd.exe ... npm.cmd`, writes logs to `tmp/dev-server.stdout.log` and `tmp/dev-server.stderr.log`, writes `tmp/dev-server.json`, and attempts to print the URL. If Windows/npm swallows stdout during first launch, read the URL from `tmp/dev-server.json`; do not retry with `Start-Process npm`, `Start-Process vite`, bare `npm run dev`, or direct `node_modules\.bin\*.ps1` paths.
 
 ## React Asset Integration
 

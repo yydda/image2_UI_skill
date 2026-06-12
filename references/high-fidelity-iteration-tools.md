@@ -100,8 +100,8 @@ Use these components for common payment, order, status, notice, amount, mobile p
 
 ## Speed Rules
 
-- Use `npm run deps:ensure` for fresh template projects; it skips reinstall when `package.json` and `package-lock.json` are unchanged.
+- Use `cmd /c npm.cmd run deps:ensure` for fresh template projects on Windows; it skips reinstall when `package.json` and `package-lock.json` are unchanged.
 - Do not run dependency installation after every CSS or component edit.
-- Reuse template lockfiles and local npm cache with `npm ci --prefer-offline --no-audit --fund=false`.
+- Reuse template lockfiles and local npm cache with `cmd /c npm.cmd ci --prefer-offline --no-audit --fund=false`.
 - Use region diff and DOM audit on failed regions before rerunning broad page-level work.
 - Do not copy `node_modules`, `dist`, or `tmp` into generated projects or installed skills.

@@ -8,8 +8,10 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "preview": "vite preview --host 0.0.0.0",
+    "dev:safe": "node scripts/start-dev-server.mjs",
     "deps:ensure": "node scripts/ensure-project-deps.mjs",
-    "architecture:check": "node scripts/check-frontend-architecture.mjs --project ."
+    "architecture:check": "node scripts/check-frontend-architecture.mjs --project .",
+    "validate": "npm run architecture:check && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@radix-ui/react-slot": "1.1.1",

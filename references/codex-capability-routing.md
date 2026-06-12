@@ -21,6 +21,7 @@ Use this contract when `moni-ui-skill` needs Codex capabilities during screensho
 - If a capability is unavailable, say which capability is missing and continue with deterministic local scripts only where they cover the same need.
 - For screenshot-only work, do not ask for Figma or design source files. Use clean screenshots plus the Moni preflight, manifest, and browser QA loop.
 - For new demos, sync `moni-ui-foundation` first. At task end, generate a reuse review and promote only user-approved generic candidates back to foundation.
+- On Windows, start local Vite previews through `node scripts\start-dev-server.mjs --port <port>` or `cmd /c dev.cmd --port <port>` before handing the URL to Codex Browser. The helper writes `tmp/dev-server.json`; use that report if stdout is blank. Browser is for navigation, screenshots, clicks, and DOM checks; it should not be the component that triggers bare `npm`, `vite`, `tsc`, `playwright`, or `Start-Process npm`.
 
 ## Execution Shape
 
@@ -31,6 +32,6 @@ Use this contract when `moni-ui-skill` needs Codex capabilities during screensho
 5. Run asset contact sheet and theme calibration before implementation when high fidelity is requested.
 6. Run local deterministic reports for anything that affects acceptance.
 7. Build `diff-diagnosis.json`, `repair-queue.json`, and `fidelity-loop-state.json` when diff, asset scoring, or DOM audit fails.
-8. Use Codex Browser/Playwright for rendered proof.
+8. Start the preview with the safe dev server helper, then use Codex Browser/Playwright for rendered proof.
 9. Generate `reuse-review.md` for new demos or sizable page work.
 10. Report the generated files, screenshot evidence, reuse review, and any failed gates.

@@ -10,12 +10,16 @@ const reportPath = args.report
 
 const requiredPaths = [
   "package.json",
+  "validate.cmd",
+  "dev.cmd",
   "tsconfig.json",
   "tsconfig.app.json",
   "vite.config.ts",
   "tailwind.config.ts",
   "components.json",
   "scripts/ensure-project-deps.mjs",
+  "scripts/start-dev-server.cmd",
+  "scripts/start-dev-server.mjs",
   "src/app/AppShell.tsx",
   "src/app/routes.tsx",
   "src/pages",
@@ -52,7 +56,7 @@ for (const relativePath of requiredPaths) {
 const packagePath = path.join(projectRoot, "package.json")
 if (await exists(packagePath)) {
   const packageJson = JSON.parse(await fs.readFile(packagePath, "utf8"))
-  for (const scriptName of ["typecheck", "build", "architecture:check", "deps:ensure"]) {
+  for (const scriptName of ["typecheck", "build", "architecture:check", "deps:ensure", "dev:safe", "validate"]) {
     if (!packageJson.scripts?.[scriptName]) {
       failures.push(`package.json is missing script '${scriptName}'`)
     }

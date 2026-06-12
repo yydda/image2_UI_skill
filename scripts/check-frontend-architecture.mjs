@@ -11,12 +11,16 @@ const reportPath = args.report
 
 const requiredPaths = [
   "package.json",
+  "validate.cmd",
+  "dev.cmd",
   "tsconfig.json",
   "tsconfig.app.json",
   "vite.config.ts",
   "tailwind.config.ts",
   "components.json",
   "scripts/ensure-project-deps.mjs",
+  "scripts/start-dev-server.cmd",
+  "scripts/start-dev-server.mjs",
   "src/app/AppShell.tsx",
   "src/app/routes.tsx",
   "src/pages",
@@ -41,7 +45,7 @@ const requiredPaths = [
   "src/types/page.ts",
 ]
 
-const requiredScripts = ["typecheck", "build", "architecture:check", "deps:ensure"]
+const requiredScripts = ["typecheck", "build", "architecture:check", "deps:ensure", "dev:safe", "validate"]
 const failures = []
 const warnings = []
 

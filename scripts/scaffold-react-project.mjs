@@ -44,6 +44,7 @@ if (await exists(targetRoot)) {
 
 await fs.mkdir(targetRoot, { recursive: true })
 await copyDirectory(templateRoot, targetRoot)
+const safetyOverlay = await ensureWindowsNodeTooling(targetRoot)
 
 const report = {
   tool: "scaffold-react-project",
@@ -51,6 +52,7 @@ const report = {
   templateRoot,
   targetRoot,
   force,
+  safetyOverlay,
   foundation: foundationResult
     ? {
         root: foundationResult.root,
@@ -81,6 +83,40 @@ async function copyDirectory(source, target) {
     } else {
       await fs.copyFile(sourcePath, targetPath)
     }
+  }
+}
+
+async function ensureWindowsNodeTooling(targetRoot) {
+  const bundledTemplateRoot = path.resolve("assets/templates/vite-react-shadcn")
+  const safetyFiles = [
+    "validate.cmd",
+    "dev.cmd",
+    "scripts/check-frontend-architecture.mjs",
+    "scripts/start-dev-server.cmd",
+    "scripts/start-dev-server.mjs",
+  ]
+  const copied = []
+
+  for (const relativePath of safetyFiles) {
+    const sourcePath = path.join(bundledTemplateRoot, relativePath)
+    const targetPath = path.join(targetRoot, relativePath)
+    if (await exists(sourcePath)) {
+      await fs.mkdir(path.dirname(targetPath), { recursive: true })
+      await fs.copyFile(sourcePath, targetPath)
+      copied.push(relativePath)
+    }
+  }
+
+  const packagePath = path.join(targetRoot, "package.json")
+  const packageJson = JSON.parse(await fs.readFile(packagePath, "utf8"))
+  packageJson.scripts ??= {}
+  packageJson.scripts["dev:safe"] = "node scripts/start-dev-server.mjs"
+  packageJson.scripts.validate = "npm run architecture:check && npm run typecheck && npm run build"
+  await fs.writeFile(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, "utf8")
+
+  return {
+    copied,
+    packageScripts: ["dev:safe", "validate"],
   }
 }
 
