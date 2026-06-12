@@ -1,3 +1,4 @@
+@import "./theme/font-faces.css";
 @import "./theme/tokens.css";
 @import "./theme/themes/default.css";
 @import "./theme/typography.css";

@@ -60,6 +60,7 @@ Assert-File "references\react-shadcn-workflow.md" | Out-Null
 Assert-File "references\codex-capability-routing.md" | Out-Null
 Assert-File "references\frontend-architecture-contract.md" | Out-Null
 Assert-File "references\foundation-governance.md" | Out-Null
+Assert-File "references\box-model-fidelity-workflow.md" | Out-Null
 Assert-File "references\high-fidelity-iteration-tools.md" | Out-Null
 Assert-File "references\hicolor-case-study.md" | Out-Null
 Assert-File "assets\cases\hicolor\traffic-3-days.png" | Out-Null
@@ -125,11 +126,13 @@ Assert-File "assets\templates\vite-react-shadcn\src\components\layout\PageFrame.
 Assert-File "assets\templates\vite-react-shadcn\src\components\layout\PhoneFrame.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\components\fidelity\FidelityCanvas.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\theme\tokens.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\font-faces.css" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\default.css" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\warm-finance.css" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\mobile-ios.css" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\theme\typography.css" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\assets\repaired\.gitkeep" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\assets\fonts\.gitkeep" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\lib\asset-registry.ts" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\types\fidelity.ts" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\types\page.ts" | Out-Null
@@ -149,6 +152,7 @@ $fidelityReference = Get-Content -LiteralPath (Join-Path $root "references\fidel
 $fidelityContract = Get-Content -LiteralPath (Join-Path $root "references\high-fidelity-execution-contract.md") -Raw -Encoding UTF8
 $routingReference = Get-Content -LiteralPath (Join-Path $root "references\codex-capability-routing.md") -Raw -Encoding UTF8
 $architectureReference = Get-Content -LiteralPath (Join-Path $root "references\frontend-architecture-contract.md") -Raw -Encoding UTF8
+$boxModelReference = Get-Content -LiteralPath (Join-Path $root "references\box-model-fidelity-workflow.md") -Raw -Encoding UTF8
 $iterationReference = Get-Content -LiteralPath (Join-Path $root "references\high-fidelity-iteration-tools.md") -Raw -Encoding UTF8
 $rootPackagePath = Join-Path $root "package.json"
 $rootPackageLockPath = Join-Path $root "package-lock.json"
@@ -215,6 +219,10 @@ Assert-True ($skill.Contains("references/real-project-workflow.md")) "SKILL.md s
 Assert-True ($skill.Contains("references/react-shadcn-workflow.md")) "SKILL.md should reference the React shadcn workflow"
 Assert-True ($skill.Contains("references/codex-capability-routing.md")) "SKILL.md should reference the Codex capability routing contract"
 Assert-True ($skill.Contains("references/frontend-architecture-contract.md")) "SKILL.md should reference the frontend architecture contract"
+Assert-True ($skill.Contains("references/box-model-fidelity-workflow.md")) "SKILL.md should reference the box model fidelity workflow"
+Assert-True ($skill.Contains("font-faces.css")) "SKILL.md should require CSS font-face entry"
+Assert-True ($skill.Contains("src/assets/fonts")) "SKILL.md should define the font asset directory"
+Assert-True ($skill.Contains("CSS box model")) "SKILL.md should require CSS box-model planning"
 Assert-True ($skill.Contains("Codex") -and $skill.Contains("imagegen") -and $skill.Contains("product-design:image-to-code")) "SKILL.md should define Codex capability reuse priority"
 Assert-True ($skill.Contains("src/components/primitives/") -and $skill.Contains("src/components/fidelity/")) "SKILL.md should define immutable architecture constraints"
 Assert-True ($skill.Contains("references/fidelity-asset-repair.md")) "SKILL.md should reference the fidelity asset repair workflow"
@@ -334,6 +342,10 @@ Assert-True ($readme.Contains("assets/templates/vite-react-shadcn/")) "README sh
 Assert-True ($readme.Contains("references/codex-capability-routing.md")) "README should mention Codex routing reference"
 Assert-True ($readme.Contains("references/frontend-architecture-contract.md")) "README should mention architecture contract"
 Assert-True ($readme.Contains("references/foundation-governance.md")) "README should mention foundation governance"
+Assert-True ($readme.Contains("references/box-model-fidelity-workflow.md")) "README should mention box model fidelity workflow"
+Assert-True ($readme.Contains("grid/flex/block")) "README should mention CSS box model planning"
+Assert-True ($readme.Contains("src/assets/fonts")) "README should mention font asset directory"
+Assert-True ($readme.Contains("PNG/WebP") -and $readme.Contains("alpha")) "README should mention high-resolution transparent assets"
 Assert-True ($readme.Contains("moni-ui-foundation")) "README should mention shared foundation repository"
 Assert-True ($readme.Contains("scripts/sync-foundation.mjs")) "README should mention foundation sync"
 Assert-True ($readme.Contains("scripts/generate-reuse-review.mjs")) "README should mention reuse review script"
@@ -359,6 +371,9 @@ Assert-True ($quickStart.Contains("architecture:check")) "QUICK_START should men
 Assert-True ($quickStart.Contains("scripts/scaffold-react-project.mjs")) "QUICK_START should mention scaffold script"
 Assert-True ($quickStart.Contains("moni-ui-foundation")) "QUICK_START should mention shared foundation"
 Assert-True ($quickStart.Contains("reuse-review")) "QUICK_START should mention reuse review"
+Assert-True ($quickStart.Contains("grid/flex/block")) "QUICK_START should mention CSS box model planning"
+Assert-True ($quickStart.Contains("src/assets/fonts")) "QUICK_START should mention font asset directory"
+Assert-True ($quickStart.Contains("PNG/WebP") -and $quickStart.Contains("alpha")) "QUICK_START should mention translucent asset alpha preservation"
 Assert-True ($quickStart.Contains("asset contact sheet")) "QUICK_START should mention asset contact sheet"
 Assert-True ($quickStart.Contains("theme calibration")) "QUICK_START should mention theme calibration"
 Assert-True ($quickStart.Contains("fidelity loop")) "QUICK_START should mention fidelity loop"
@@ -370,6 +385,9 @@ Assert-True ($openaiYaml.Contains("theme calibration")) "agents/openai.yaml shou
 Assert-True ($openaiYaml.Contains("fidelity loop")) "agents/openai.yaml should mention fidelity loop"
 Assert-True ($openaiYaml.Contains("moni-ui-foundation")) "agents/openai.yaml should mention shared foundation"
 Assert-True ($openaiYaml.Contains("generate-reuse-review")) "agents/openai.yaml should mention reuse review"
+Assert-True ($openaiYaml.Contains("grid/flex/block")) "agents/openai.yaml should mention box model planning"
+Assert-True ($openaiYaml.Contains("src/theme/font-faces.css")) "agents/openai.yaml should mention font-face CSS"
+Assert-True ($openaiYaml.Contains("alpha")) "agents/openai.yaml should mention translucent assets"
 Assert-True ($readme.Contains("Vite + React + TypeScript + shadcn")) "README should mention the default React stack"
 Assert-True ($assetReference.Contains("React import")) "asset manifest reference should include React import guidance"
 Assert-True ($assetReference.Contains("src/assets/generated/")) "asset manifest reference should include generated asset path guidance"
@@ -405,9 +423,17 @@ Assert-True ($routingReference.Contains("diff-diagnosis.json")) "routing referen
 Assert-True ($architectureReference.Contains("src/components/primitives")) "architecture contract should define primitives directory"
 Assert-True ($architectureReference.Contains("src/components/fidelity")) "architecture contract should define fidelity directory"
 Assert-True ($architectureReference.Contains("tokens.css")) "architecture contract should define tokens"
+Assert-True ($architectureReference.Contains("font-faces.css")) "architecture contract should mention font-face CSS"
+Assert-True ($architectureReference.Contains("src/assets/fonts")) "architecture contract should mention font asset directory"
+Assert-True ($architectureReference.Contains("Box Model Fidelity")) "architecture contract should define box model fidelity"
 Assert-True ($architectureReference.Contains("FidelityCanvas")) "architecture contract should define FidelityCanvas"
 Assert-True ($architectureReference.Contains("architecture:check")) "architecture contract should define architecture check"
 Assert-True ($architectureReference.Contains("deps:ensure")) "architecture contract should define dependency cache check"
+Assert-True ($boxModelReference.Contains("CSS box model")) "box model workflow should explain CSS box model planning"
+Assert-True ($boxModelReference.Contains("src/assets/fonts")) "box model workflow should mention self-hosted fonts"
+Assert-True ($fidelityContract.Contains("boxModel")) "fidelity contract should include boxModel fields"
+Assert-True ($fidelityContract.Contains("Required Font Handling")) "fidelity contract should require font handling"
+Assert-True ($fidelityReference.Contains("semi-transparent-preserve")) "fidelity asset repair should mention translucent alpha policy"
 Assert-True ($iterationReference.Contains("build-asset-contact-sheet.mjs")) "iteration tools should document asset contact sheet"
 Assert-True ($iterationReference.Contains("diagnose-fidelity-diff.mjs")) "iteration tools should document diff diagnosis"
 Assert-True ($iterationReference.Contains("calibrate-theme.mjs")) "iteration tools should document theme calibration"

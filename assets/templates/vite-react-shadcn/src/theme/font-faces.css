@@ -1,0 +1,28 @@
+/*
+  Self-host project fonts here.
+
+  Put downloaded, licensed, or open-source font files in src/assets/fonts/.
+  Keep UI text as real text; do not bake editable copy into images.
+
+  Example:
+
+  @font-face {
+    font-family: "Moni Serif SC";
+    src: url("../assets/fonts/noto-serif-sc-700.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+*/
+
+@font-face {
+  font-family: "Moni Local Serif SC";
+  src: local("Noto Serif SC"), local("Source Han Serif SC"), local("Songti SC"), local("SimSun");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Moni Local Sans SC";
+  src: local("Noto Sans SC"), local("Source Han Sans SC"), local("Microsoft YaHei"), local("PingFang SC");
+  font-display: swap;
+}

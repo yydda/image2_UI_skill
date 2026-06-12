@@ -96,6 +96,15 @@ Use `fidelityMode: "production-quality"` when the goal is a production page that
       "height": 116,
       "renderStrategy": "code",
       "component": "PaymentBar",
+      "layoutType": "grid",
+      "boxModel": {
+        "padding": "0 20px",
+        "margin": "0",
+        "gap": 18,
+        "border": "1px solid var(--payment-border)",
+        "radius": 6,
+        "shadow": "none"
+      },
       "critical": true,
       "maxDiffRatio": 0.04
     }
@@ -105,7 +114,9 @@ Use `fidelityMode: "production-quality"` when the goal is a production page that
 }
 ```
 
-Every major visual region must have one owner component or implementation note.
+Every major visual region must have one owner component or implementation note. In maintainable 1:1 mode, every region must also record the CSS box model: layout type, padding, margin, gap, border, radius, shadow, and asset slots. Prefer real grid/flex/block layout before using absolute positioning.
+
+Use `FidelityCanvas` for measurement and screenshot-exact overlays only. Do not build the whole page as one static image or a flat list of arbitrary absolute positions when normal CSS boxes can express the design.
 
 Critical regions must use `maxDiffRatio <= 0.06`. If a critical region needs a looser threshold, the correct result is not "pass"; mark the final delivery as `loose gate passed only` or `未达 1:1` and list that region.
 
@@ -188,6 +199,16 @@ Do not list only the obvious large illustrations.
 
 For high-fidelity work, each non-code asset must include `sourceStrategy`, `repairStrategy`, `qualityGate`, `slotSize`, `targetPixels`, and `targetPath`.
 
+Assets must be planned as pixels inside a component-owned slot. The slot belongs to the CSS box model; the asset pipeline owns crop, alpha, repair, scale, and compression.
+
+For exact translucent assets:
+
+- prefer PNG-32 source output with alpha
+- optionally export WebP alpha for runtime size, but keep the PNG source
+- do not export translucent assets as JPEG or with a fake white/cream background
+- use at least 2x target pixels for production-quality mode
+- record `backgroundMatched` and `backgroundColor` only when preserving the sampled background is better than alpha extraction
+
 If a previous or initial plan used 2x/upscale and a later plan switches to 1x/none, include `downgradeReason`:
 
 ```json
@@ -203,6 +224,19 @@ If a previous or initial plan used 2x/upscale and a later plan switches to 1x/no
   "targetPath": "src/assets/original/repaired/brand-lockup.png"
 }
 ```
+
+## Required Font Handling
+
+Editable UI text must remain real text and use CSS fonts. If system fonts do not match the reference:
+
+1. Search official/open-source font sources.
+2. Download or install the required weights.
+3. Put font files under `src/assets/fonts/`.
+4. Declare them in `src/theme/font-faces.css`.
+5. Wire semantic font stacks through `src/theme/tokens.css`.
+6. Rerun screenshot diff and DOM font audit.
+
+Record source URL, license assumption, weights, fallback stack, and any subsetting decision in the task notes or reuse review. Do not embed commercial or brand fonts unless the user provides licensed files.
 
 ## Required Interaction Map
 

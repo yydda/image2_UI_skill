@@ -25,6 +25,7 @@ src/
     layout/
     fidelity/
   theme/
+    font-faces.css
     tokens.css
     themes/
       default.css
@@ -35,6 +36,7 @@ src/
     generated/
     original/
     repaired/
+    fonts/
   data/
   lib/
     utils.ts
@@ -56,6 +58,7 @@ src/
 ## Tokens And Themes
 
 - `src/theme/tokens.css` defines semantic variables for color, typography, spacing, radii, shadows, borders, and z-index.
+- `src/theme/font-faces.css` is the only default place for project-level `@font-face` declarations.
 - `src/theme/themes/*.css` may only override token values.
 - Tailwind must map to CSS variables where possible.
 - Do not scatter hardcoded one-off colors, font stacks, or spacing scales when a token exists.
@@ -67,6 +70,17 @@ src/
 - Generated assets go in `src/assets/generated/`.
 - User-provided reference/crops go in `src/assets/original/`.
 - Repaired crops go in `src/assets/repaired/`.
+- Downloaded, licensed, or open-source font files go in `src/assets/fonts/` and must be referenced from `src/theme/font-faces.css`.
+
+## Box Model Fidelity
+
+High-fidelity work must still be engineered as CSS boxes, not as a static screenshot:
+
+- major regions map to owner components
+- components use grid/flex/block, padding, margin, gap, border, radius, shadow, and stable asset slots
+- `FidelityCanvas` is reserved for screenshot-exact overlays and measurement helpers
+- responsive behavior is added after the desktop/reference box model is stable
+- visual fixes should adjust tokens and box model values before arbitrary transforms or one-off offsets
 
 ## Validation
 

@@ -71,8 +71,10 @@ Use $moni-ui-skill，把这张截图复刻成 Vite + React + TypeScript + shadcn
 请同时扮演资深视觉设计师、资深前端工程师、资深前端架构师：先做视觉与架构判断，再实现。
 技术栈默认用 Vite + React + TypeScript + shadcn。
 新建项目先同步 moni-ui-foundation，再使用 scripts/scaffold-react-project.mjs；不要重建工程架构，风格只通过 tokens/themes 和页面代码变化。
+请先按 CSS 盒模型拆页面：区域 grid/flex/block、padding、margin、gap、border、radius、shadow、asset slot 和组件 owner 都要规划清楚。
 请判断哪些区域用代码实现，哪些区域需要调用内置 image_gen 生成图片资产。
-生成资产放到 src/assets/generated，并通过 React import 接回组件。
+生成资产放到 src/assets/generated，并通过 React import 接回组件；精确裁切素材需要高清透明 PNG/WebP 或 SVG，半透明素材必须保留 alpha。
+如果字体不接近，请联网查找官方/开源字体包，下载或安装后放到 src/assets/fonts，并通过 src/theme/font-faces.css 引入。
 完成后运行 npm run architecture:check、typecheck/build，启动本地预览，检查主要点击路径，并提供截图验真；最后生成 reuse-review.md，列出可沉淀到 moni-ui-foundation 的候选项。
 ```
 
@@ -123,12 +125,15 @@ Use $moni-ui-skill，参考设计稿做 1:1 高保真 React 页面。
 请同时扮演资深视觉设计师、资深前端工程师、资深前端架构师：先判断页面层级、资产边界、组件复用和工程约束，再写代码。
 Moni 只做编排：位图资产用内置 imagegen/image_gen，本地预览和 DOM 检查优先用 Codex Browser，普通截图转代码启发可参考 Product Design，但最终工程必须服从统一架构。
 新建项目必须先同步 moni-ui-foundation，再使用统一 Vite + React + TypeScript + shadcn 模板，不要重建工程架构；只允许通过 tokens/theme presets 和页面实现改变风格。
+页面必须用真实 CSS 盒模型规划，不要用整页截图或随意绝对定位堆叠；组件要可维护、可响应式，同时通过像素眼循环精调。
 切图前先检查参考图是否含红色批注箭头、水印、浏览器滚动条、下载/缩放浮层、聊天/助手悬浮窗、贴纸等非设计稿元素。
 如果参考图被污染，不要直接切图；先要求干净原图，或裁出/遮罩成 tmp/fidelity/clean-reference.png 后再作为 source。
 在写 React 前必须先产出并校验 page-blueprint.json、layout-manifest.json、assets.manifest.json、element-manifest.json、icon-inventory.json、interaction-map.json。
 统一规划所有要裁切、修复、矢量化的资产，再批量处理。
 所有非通用图标必须 original-crop / repair-crop / vector-rebuild / manual-svg，不要默认用 lucide-react 替代。
 React 实现前必须生成 asset contact sheet；颜色/字体不准时先跑 theme calibration。
+字体不准时联网查找官方/开源字体包，自托管到 src/assets/fonts，并在 src/theme/font-faces.css 用 @font-face 引入。
+所有 exact 素材先定义 CSS slot，再输出高清半透明 PNG/WebP 或 SVG；不要用白底/米色底冒充透明。
 完成后跑整页 diff、区域级 diff 和元素级 DOM 审计。
 失败后运行 diff diagnosis、repair queue 和 fidelity loop；每轮只修 worst/focus 区域，不要大面积乱改。
 critical region 的 maxDiffRatio 不要超过 0.06；输出 worst 10 局部区域并优先修最差区域。

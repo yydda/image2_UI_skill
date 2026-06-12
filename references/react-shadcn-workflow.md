@@ -16,7 +16,7 @@ Default stack:
 
 Prefer the latest `moni-ui-foundation` template for new demos or fresh apps. The bundled template at `assets/templates/vite-react-shadcn/` is the offline fallback and seed copy.
 
-The foundation template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, theme presets, primitives, fidelity components, and `architecture:check`; and runs Vite with `--host 0.0.0.0`.
+The foundation template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, `src/theme/font-faces.css`, `src/assets/fonts/`, theme presets, primitives, fidelity components, and `architecture:check`; and runs Vite with `--host 0.0.0.0`.
 
 The architecture contract is mandatory for new demos. Read `references/frontend-architecture-contract.md` before changing the template shape. Style can change through `src/theme/tokens.css`, `src/theme/themes/*.css`, and page implementation; do not move shadcn primitives, asset directories, app shell, or validation scripts for a one-off page.
 
@@ -55,7 +55,7 @@ Before initializing shadcn or adding components, check:
 - Do not overwrite existing `tailwind.config`, `index.css`, `components.json`, or `utils.ts` without reading them first.
 - Keep shadcn components in `src/components/ui/` unless the project already uses another path.
 - Do not change template dependencies to `latest`; keep the lockfile and pinned Tailwind 3 stack unless the user explicitly asks for a dependency upgrade.
-- For a fresh Moni project, keep the fixed `src/app`, `src/pages`, `src/components/primitives`, `src/components/layout`, `src/components/fidelity`, `src/theme`, `src/assets/generated`, `src/assets/original`, `src/assets/repaired`, `src/lib`, and `src/types` layout.
+- For a fresh Moni project, keep the fixed `src/app`, `src/pages`, `src/components/primitives`, `src/components/layout`, `src/components/fidelity`, `src/theme`, `src/assets/generated`, `src/assets/original`, `src/assets/repaired`, `src/assets/fonts`, `src/lib`, and `src/types` layout.
 - Before creating a one-off component, check template primitives such as `PaymentOption`, `StatusTimeline`, `AgreementBar`, `NoticeBanner`, `InfoSummaryCard`, `PriceText`, `StatusDot`, `IconFrame`, `PhoneFrame`, `FidelityCanvas`, `AssetSlot`, and `MeasuredText`.
 
 ## Component Selection

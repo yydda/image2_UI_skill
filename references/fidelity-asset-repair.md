@@ -42,6 +42,9 @@ Each high-fidelity asset should include:
   "cropBox": { "x": 55, "y": 292, "width": 158, "height": 148 },
   "slotSize": { "width": 158, "height": 148 },
   "targetPixels": { "width": 384, "height": 360 },
+  "safePadding": 12,
+  "alphaPolicy": "semi-transparent-preserve",
+  "densityPolicy": "production-quality",
   "qualityGate": "exact",
   "status": "needs-repair",
   "targetPath": "src/assets/original/repaired/document-search-illustration.png"
@@ -70,6 +73,14 @@ Allowed `qualityGate` values:
 - `exact`
 - `close`
 - `concept`
+
+Recommended alpha policies:
+
+- `solid-alpha`: opaque subject with transparent outside edges
+- `semi-transparent-preserve`: preserve translucent strokes, shadows, glow, and paper texture
+- `background-matched`: keep sampled source background because alpha extraction would destroy thin lines
+
+Use PNG-32 as the repaired source format for alpha-heavy exact assets. WebP alpha can be added as an optimized runtime variant, but keep the PNG source for review and future repair.
 
 ## Tool Sequence
 
@@ -100,6 +111,9 @@ Use `capture-fidelity.mjs` when Playwright is installed in the target project; p
 - If the crop is too small, use `upscale`; Real-ESRGAN is preferred when available, and `sharp` resize/sharpen is the fallback.
 - For `vectorize-svg`, prefer VTracer when available; otherwise use the bundled Node `potrace` fallback for simple monochrome marks and line art.
 - If transparency damages thin lines, use `background-matched` and record `backgroundColor`.
+- If the asset is supposed to be transparent, reject white/cream matte backgrounds. A fake matching background is only allowed when explicitly marked `background-matched`.
+- For translucent decorations and line art, preserve alpha gradients instead of thresholding everything into hard edges.
+- Crop with safe padding when shadows or soft edges exist, then fit the asset into a CSS slot with `object-fit: contain`.
 
 ## Scoring And Rejection
 
@@ -107,6 +121,7 @@ Reject an asset when:
 
 - final raster pixels are smaller than `targetPixels`
 - `transparentRequired` is true but no alpha channel or transparent corners exist
+- alpha-heavy exact assets contain matte edges, white/cream backgrounds, hard cutouts, or dirty borders beyond the accepted threshold
 - `qualityGate: exact` uses `image_gen-fallback`
 - vector rebuild output is not valid SVG
 - image generation creates pseudo text, wrong subject, logo drift, extra UI, watermark, or unrelated objects
