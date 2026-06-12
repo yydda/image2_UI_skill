@@ -2,10 +2,31 @@
 import fs from "node:fs/promises"
 import path from "node:path"
 import { parseArgs, requireArg, writeJson } from "./fidelity-lib.mjs"
+import {
+  ensureFoundation,
+  foundationTemplateFromResult,
+  readFoundationConfig,
+} from "./foundation-lib.mjs"
 
 const args = parseArgs()
 const targetRoot = path.resolve(requireArg(args, "target"))
-const templateRoot = path.resolve(String(args.template ?? "assets/templates/vite-react-shadcn"))
+const useFoundation = !args["no-foundation"] && !args.template
+const foundationConfig = await readFoundationConfig()
+const foundationResult = useFoundation
+  ? await ensureFoundation(foundationConfig, {
+      foundation: args.foundation,
+      update: !args["no-update"],
+      allowBundledFallback: true,
+    })
+  : null
+const templateRoot = path.resolve(
+  String(
+    args.template ??
+      (foundationResult
+        ? foundationTemplateFromResult(foundationResult, foundationConfig)
+        : "assets/templates/vite-react-shadcn"),
+  ),
+)
 const force = Boolean(args.force)
 const reportPath = path.resolve(String(args.report ?? path.join(targetRoot, "tmp", "scaffold-report.json")))
 const ignoredTemplateEntries = new Set(["node_modules", "dist", "tmp", ".git"])
@@ -30,6 +51,16 @@ const report = {
   templateRoot,
   targetRoot,
   force,
+  foundation: foundationResult
+    ? {
+        root: foundationResult.root,
+        source: foundationResult.source,
+        updated: foundationResult.updated,
+        updateSkipped: foundationResult.updateSkipped ?? false,
+        updateReason: foundationResult.updateReason ?? null,
+        warning: foundationResult.warning ?? null,
+      }
+    : null,
 }
 
 await fs.mkdir(path.dirname(reportPath), { recursive: true })

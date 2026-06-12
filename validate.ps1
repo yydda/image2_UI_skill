@@ -49,6 +49,7 @@ $quickStartPath = Assert-File "QUICK_START.md"
 $openaiYamlPath = Assert-File "agents\openai.yaml"
 Assert-File "package.json" | Out-Null
 Assert-File "package-lock.json" | Out-Null
+Assert-File "foundation.config.json" | Out-Null
 Assert-File "references\asset-manifest-and-prompts.md" | Out-Null
 Assert-File "references\imagegen-entrypoint.md" | Out-Null
 Assert-File "references\high-fidelity-execution-contract.md" | Out-Null
@@ -58,6 +59,7 @@ Assert-File "references\real-project-workflow.md" | Out-Null
 Assert-File "references\react-shadcn-workflow.md" | Out-Null
 Assert-File "references\codex-capability-routing.md" | Out-Null
 Assert-File "references\frontend-architecture-contract.md" | Out-Null
+Assert-File "references\foundation-governance.md" | Out-Null
 Assert-File "references\high-fidelity-iteration-tools.md" | Out-Null
 Assert-File "references\hicolor-case-study.md" | Out-Null
 Assert-File "assets\cases\hicolor\traffic-3-days.png" | Out-Null
@@ -66,10 +68,19 @@ Assert-File "assets\cases\hicolor\threads-recommendation.png" | Out-Null
 Assert-File "scripts\install-local.ps1" | Out-Null
 Assert-File "scripts\sync-local.ps1" | Out-Null
 Assert-File "scripts\setup-fidelity-tools.ps1" | Out-Null
+Assert-File "validate.cmd" | Out-Null
+Assert-File "scripts\install-local.cmd" | Out-Null
+Assert-File "scripts\sync-local.cmd" | Out-Null
+Assert-File "scripts\setup-fidelity-tools.cmd" | Out-Null
 Assert-File "scripts\inspect-reference-image.mjs" | Out-Null
 Assert-File "scripts\reference-preflight-lib.mjs" | Out-Null
 Assert-File "scripts\validate-fidelity-plan.mjs" | Out-Null
 Assert-File "scripts\fidelity-lib.mjs" | Out-Null
+Assert-File "scripts\foundation-lib.mjs" | Out-Null
+Assert-File "scripts\sync-foundation.mjs" | Out-Null
+Assert-File "scripts\init-foundation-repo.mjs" | Out-Null
+Assert-File "scripts\generate-reuse-review.mjs" | Out-Null
+Assert-File "scripts\promote-to-foundation.mjs" | Out-Null
 Assert-File "scripts\extract-reference-assets.mjs" | Out-Null
 Assert-File "scripts\repair-asset.mjs" | Out-Null
 Assert-File "scripts\score-asset.mjs" | Out-Null
@@ -258,6 +269,10 @@ Assert-True ($rootPackage.scripts."fidelity:diagnose".Contains("diagnose-fidelit
 Assert-True ($rootPackage.scripts."fidelity:calibrate-theme".Contains("calibrate-theme.mjs")) "Root package should expose fidelity:calibrate-theme"
 Assert-True ($rootPackage.scripts."fidelity:loop".Contains("run-fidelity-loop.mjs")) "Root package should expose fidelity:loop"
 Assert-True ($rootPackage.scripts."fidelity:repair-queue".Contains("build-repair-queue.mjs")) "Root package should expose fidelity:repair-queue"
+Assert-True ($rootPackage.scripts."foundation:init".Contains("init-foundation-repo.mjs")) "Root package should expose foundation:init"
+Assert-True ($rootPackage.scripts."foundation:sync".Contains("sync-foundation.mjs")) "Root package should expose foundation:sync"
+Assert-True ($rootPackage.scripts."foundation:review".Contains("generate-reuse-review.mjs")) "Root package should expose foundation:review"
+Assert-True ($rootPackage.scripts."foundation:promote".Contains("promote-to-foundation.mjs")) "Root package should expose foundation:promote"
 Assert-True ($rootPackage.scripts."scaffold:react".Contains("scaffold-react-project.mjs")) "Root package should expose scaffold:react"
 Assert-True ($rootPackageLock.Contains('"sharp": "0.35.0"')) "Root lockfile should lock sharp"
 Assert-True ($rootPackageLock.Contains('"pixelmatch": "7.2.0"')) "Root lockfile should lock pixelmatch"
@@ -309,10 +324,19 @@ Assert-True ($readme.Contains("prompt-basic-ui")) "README should include basic U
 Assert-True ($readme.Contains("prompt-real-project")) "README should include real project prompt template"
 Assert-True ($readme.Contains("prompt-component-refactor")) "README should include component refactor prompt template"
 Assert-True ($readme.Contains("prompt-mobile-app")) "README should include mobile app prompt template"
-Assert-True ($readme.Contains("scripts\install-local.ps1")) "README should mention install script"
+Assert-True ($readme.Contains("scripts\install-local.cmd")) "README should mention Windows cmd install wrapper"
+Assert-True ($readme.Contains("scripts\sync-local.cmd")) "README should mention Windows cmd sync wrapper"
+Assert-True ($skill.Contains("Windows Script Execution Guard")) "SKILL should include Windows script execution guard"
+Assert-True ($skill.Contains("Foundation Memory Loop")) "SKILL should include foundation memory loop"
+Assert-True ($skill.Contains("generate-reuse-review.mjs")) "SKILL should require reuse review"
+Assert-True ($skill.Contains("promote-to-foundation.mjs")) "SKILL should mention reviewed foundation promotion"
 Assert-True ($readme.Contains("assets/templates/vite-react-shadcn/")) "README should mention bundled React template"
 Assert-True ($readme.Contains("references/codex-capability-routing.md")) "README should mention Codex routing reference"
 Assert-True ($readme.Contains("references/frontend-architecture-contract.md")) "README should mention architecture contract"
+Assert-True ($readme.Contains("references/foundation-governance.md")) "README should mention foundation governance"
+Assert-True ($readme.Contains("moni-ui-foundation")) "README should mention shared foundation repository"
+Assert-True ($readme.Contains("scripts/sync-foundation.mjs")) "README should mention foundation sync"
+Assert-True ($readme.Contains("scripts/generate-reuse-review.mjs")) "README should mention reuse review script"
 Assert-True ($readme.Contains("scripts/scaffold-react-project.mjs")) "README should mention React scaffold script"
 Assert-True ($readme.Contains("architecture:check")) "README should mention architecture check"
 Assert-True ($readme.Contains("asset contact sheet")) "README should mention asset contact sheet"
@@ -333,6 +357,8 @@ Assert-True ($quickStart.Contains("0.06")) "QUICK_START should mention critical 
 Assert-True ($quickStart.Contains("clean-reference.png")) "QUICK_START should mention clean reference handling"
 Assert-True ($quickStart.Contains("architecture:check")) "QUICK_START should mention architecture checking"
 Assert-True ($quickStart.Contains("scripts/scaffold-react-project.mjs")) "QUICK_START should mention scaffold script"
+Assert-True ($quickStart.Contains("moni-ui-foundation")) "QUICK_START should mention shared foundation"
+Assert-True ($quickStart.Contains("reuse-review")) "QUICK_START should mention reuse review"
 Assert-True ($quickStart.Contains("asset contact sheet")) "QUICK_START should mention asset contact sheet"
 Assert-True ($quickStart.Contains("theme calibration")) "QUICK_START should mention theme calibration"
 Assert-True ($quickStart.Contains("fidelity loop")) "QUICK_START should mention fidelity loop"
@@ -342,6 +368,8 @@ Assert-True ($openaiYaml.Contains("Codex Browser")) "agents/openai.yaml should m
 Assert-True ($openaiYaml.Contains("asset contact sheet")) "agents/openai.yaml should mention asset contact sheet"
 Assert-True ($openaiYaml.Contains("theme calibration")) "agents/openai.yaml should mention theme calibration"
 Assert-True ($openaiYaml.Contains("fidelity loop")) "agents/openai.yaml should mention fidelity loop"
+Assert-True ($openaiYaml.Contains("moni-ui-foundation")) "agents/openai.yaml should mention shared foundation"
+Assert-True ($openaiYaml.Contains("generate-reuse-review")) "agents/openai.yaml should mention reuse review"
 Assert-True ($readme.Contains("Vite + React + TypeScript + shadcn")) "README should mention the default React stack"
 Assert-True ($assetReference.Contains("React import")) "asset manifest reference should include React import guidance"
 Assert-True ($assetReference.Contains("src/assets/generated/")) "asset manifest reference should include generated asset path guidance"

@@ -76,7 +76,7 @@ Allowed `qualityGate` values:
 Run these from the project using the skill:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-fidelity-tools.ps1
+.\scripts\setup-fidelity-tools.cmd
 node scripts/inspect-reference-image.mjs --source <design.png> --out-dir tmp/fidelity/reference-preflight --fail-on-contamination
 node scripts/validate-fidelity-plan.mjs --blueprint tmp/fidelity/page-blueprint.json --layout tmp/fidelity/layout-manifest.json --assets assets.manifest.json --elements tmp/fidelity/element-manifest.json --icons tmp/fidelity/icon-inventory.json --interactions tmp/fidelity/interaction-map.json --mode strict
 node scripts/extract-reference-assets.mjs --manifest <manifest.json> --source <design.png>
@@ -88,7 +88,7 @@ node scripts/compare-region-fidelity.mjs --reference <design.png> --actual <scre
 node scripts/audit-rendered-elements.mjs --url <local-url> --reference <design.png> --elements tmp/fidelity/element-manifest.json
 ```
 
-Use `setup-fidelity-tools.ps1 -CheckOnly` when only checking whether required tools are available.
+Use `.\scripts\setup-fidelity-tools.cmd -CheckOnly` on Windows when only checking whether required tools are available. If you must call the PowerShell script directly, use `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup-fidelity-tools.ps1 -CheckOnly`; never open the `.ps1` file through Windows Explorer or the Open With dialog.
 Use `capture-fidelity.mjs` when Playwright is installed in the target project; pass `--elements tmp/fidelity/element-manifest.json` so the same run checks DOM bounding boxes, font drift, text overflow, and disallowed overlap. Otherwise capture with the Codex browser and still run the diff scripts.
 
 ## Repair Rules

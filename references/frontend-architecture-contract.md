@@ -2,6 +2,8 @@
 
 All new Moni UI React deliverables use one fixed engineering architecture. Visual style can change through tokens and themes; the project structure and component contracts stay stable.
 
+The preferred source of this architecture is `moni-ui-foundation`. The bundled `assets/templates/vite-react-shadcn/` template is an offline fallback and seed copy, not the long-term source of truth once the foundation repository is available.
+
 ## Fixed Stack
 
 - Vite + React + TypeScript
@@ -78,3 +80,5 @@ npm run deps:ensure
 ```
 
 For high-fidelity work, also run the Moni fidelity scripts from the skill root.
+
+After a new demo or sizable page build, generate `tmp/fidelity/reuse-review.md` and promote only reviewed, generic candidates back to `moni-ui-foundation`.

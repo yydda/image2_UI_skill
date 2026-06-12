@@ -1,0 +1,9 @@
+{
+  "name": "moni-ui-foundation",
+  "repository": "https://github.com/yydda/moni-ui-foundation.git",
+  "branch": "main",
+  "localPath": "../moni-ui-foundation",
+  "cachePath": ".moni-foundation-cache/moni-ui-foundation",
+  "templatePath": "templates/vite-react-shadcn",
+  "bundledTemplatePath": "assets/templates/vite-react-shadcn"
+}

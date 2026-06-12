@@ -14,21 +14,23 @@ Default stack:
 - `lucide-react`
 - `@/*` alias to `src/*`
 
-Prefer the bundled template at `assets/templates/vite-react-shadcn/` for new demos or fresh apps.
+Prefer the latest `moni-ui-foundation` template for new demos or fresh apps. The bundled template at `assets/templates/vite-react-shadcn/` is the offline fallback and seed copy.
 
-The bundled template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, theme presets, primitives, fidelity components, and `architecture:check`; and runs Vite with `--host 0.0.0.0`.
+The foundation template is the fastest default path. It pins React, Vite, TypeScript, Tailwind 3, PostCSS, shadcn-compatible utilities, and lucide versions; includes `package-lock.json`; uses `moduleResolution: "Bundler"`; includes `src/vite-env.d.ts`; includes the fixed Moni architecture, CSS tokens, theme presets, primitives, fidelity components, and `architecture:check`; and runs Vite with `--host 0.0.0.0`.
 
 The architecture contract is mandatory for new demos. Read `references/frontend-architecture-contract.md` before changing the template shape. Style can change through `src/theme/tokens.css`, `src/theme/themes/*.css`, and page implementation; do not move shadcn primitives, asset directories, app shell, or validation scripts for a one-off page.
 
 For a fresh demo:
 
-1. Run `node scripts/scaffold-react-project.mjs --target <target>` or copy the template directory.
-2. Edit project files and source code in one pass.
-3. Run `npm run deps:ensure`; if that script is unavailable, run `npm ci --prefer-offline --no-audit --fund=false`.
-4. Run `npm run architecture:check`.
-5. Run `npm run build` or `npm run typecheck`.
-6. Start `npm run dev -- --port <free-port>` and open `http://127.0.0.1:<port>`.
-7. In browser automation, prefer `load` or `domcontentloaded` waits; avoid relying on `networkidle`.
+1. Run `node scripts/sync-foundation.mjs`.
+2. Run `node scripts/scaffold-react-project.mjs --target <target>`. Use `--no-foundation` only for offline/bundled fallback.
+3. Edit project files and source code in one pass.
+4. Run `npm run deps:ensure`; if that script is unavailable, run `npm ci --prefer-offline --no-audit --fund=false`.
+5. Run `npm run architecture:check`.
+6. Run `npm run build` or `npm run typecheck`.
+7. Start `npm run dev -- --port <free-port>` and open `http://127.0.0.1:<port>`.
+8. In browser automation, prefer `load` or `domcontentloaded` waits; avoid relying on `networkidle`.
+9. After delivery, run `node scripts/generate-reuse-review.mjs --project <target>` from the skill root and report the reusable candidates.
 
 Only run `npm install` when no lockfile exists or the project is intentionally changing dependencies.
 
@@ -48,7 +50,7 @@ Before initializing shadcn or adding components, check:
 
 - If shadcn is already configured, add only the missing components.
 - If Tailwind exists but shadcn does not, initialize shadcn without replacing project theme conventions.
-- If neither exists and this is a fresh demo, use the bundled template or the official shadcn Vite flow.
+- If neither exists and this is a fresh Moni demo, sync `moni-ui-foundation` and scaffold from it before considering the bundled fallback or official shadcn Vite flow.
 - Do not run multiple shadcn initializations in the same project.
 - Do not overwrite existing `tailwind.config`, `index.css`, `components.json`, or `utils.ts` without reading them first.
 - Keep shadcn components in `src/components/ui/` unless the project already uses another path.
