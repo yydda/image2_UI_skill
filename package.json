@@ -4,6 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "architecture:check": "node scripts/check-frontend-architecture.mjs",
+    "deps:ensure": "node scripts/ensure-project-deps.mjs",
+    "fidelity:contact-sheet": "node scripts/build-asset-contact-sheet.mjs",
+    "fidelity:diagnose": "node scripts/diagnose-fidelity-diff.mjs",
+    "fidelity:calibrate-theme": "node scripts/calibrate-theme.mjs",
+    "fidelity:loop": "node scripts/run-fidelity-loop.mjs",
     "fidelity:capture": "node scripts/capture-fidelity.mjs",
     "fidelity:compare": "node scripts/compare-fidelity.mjs",
     "fidelity:region-diff": "node scripts/compare-region-fidelity.mjs",
@@ -12,7 +18,9 @@
     "fidelity:elements": "node scripts/audit-rendered-elements.mjs",
     "fidelity:plan": "node scripts/validate-fidelity-plan.mjs",
     "fidelity:repair": "node scripts/repair-asset.mjs",
-    "fidelity:score": "node scripts/score-asset.mjs"
+    "fidelity:score": "node scripts/score-asset.mjs",
+    "fidelity:repair-queue": "node scripts/build-repair-queue.mjs",
+    "scaffold:react": "node scripts/scaffold-react-project.mjs"
   },
   "dependencies": {
     "pixelmatch": "7.2.0",

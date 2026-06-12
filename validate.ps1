@@ -56,6 +56,9 @@ Assert-File "references\fidelity-asset-repair.md" | Out-Null
 Assert-File "references\high-fidelity-workflow-observations.md" | Out-Null
 Assert-File "references\real-project-workflow.md" | Out-Null
 Assert-File "references\react-shadcn-workflow.md" | Out-Null
+Assert-File "references\codex-capability-routing.md" | Out-Null
+Assert-File "references\frontend-architecture-contract.md" | Out-Null
+Assert-File "references\high-fidelity-iteration-tools.md" | Out-Null
 Assert-File "references\hicolor-case-study.md" | Out-Null
 Assert-File "assets\cases\hicolor\traffic-3-days.png" | Out-Null
 Assert-File "assets\cases\hicolor\xiaohongshu-pinned.jpg" | Out-Null
@@ -74,6 +77,14 @@ Assert-File "scripts\capture-fidelity.mjs" | Out-Null
 Assert-File "scripts\compare-fidelity.mjs" | Out-Null
 Assert-File "scripts\compare-region-fidelity.mjs" | Out-Null
 Assert-File "scripts\audit-rendered-elements.mjs" | Out-Null
+Assert-File "scripts\check-frontend-architecture.mjs" | Out-Null
+Assert-File "scripts\build-repair-queue.mjs" | Out-Null
+Assert-File "scripts\scaffold-react-project.mjs" | Out-Null
+Assert-File "scripts\build-asset-contact-sheet.mjs" | Out-Null
+Assert-File "scripts\diagnose-fidelity-diff.mjs" | Out-Null
+Assert-File "scripts\calibrate-theme.mjs" | Out-Null
+Assert-File "scripts\run-fidelity-loop.mjs" | Out-Null
+Assert-File "scripts\ensure-project-deps.mjs" | Out-Null
 Assert-File "assets\examples\fidelity-manifest.sample.json" | Out-Null
 Assert-File "assets\examples\fidelity-page-blueprint.sample.json" | Out-Null
 Assert-File "assets\examples\fidelity-layout-manifest.sample.json" | Out-Null
@@ -87,7 +98,30 @@ Assert-File "assets\templates\vite-react-shadcn\tsconfig.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\tsconfig.app.json" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\App.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\vite-env.d.ts" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\scripts\check-frontend-architecture.mjs" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\scripts\ensure-project-deps.mjs" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\app\AppShell.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\app\routes.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\pages\HomePage.tsx" | Out-Null
 Assert-File "assets\templates\vite-react-shadcn\src\components\ui\button.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\ActionGroup.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\PaymentOption.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\StatusTimeline.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\AgreementBar.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\NoticeBanner.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\primitives\InfoSummaryCard.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\layout\PageFrame.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\layout\PhoneFrame.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\components\fidelity\FidelityCanvas.tsx" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\tokens.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\default.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\warm-finance.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\themes\mobile-ios.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\theme\typography.css" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\assets\repaired\.gitkeep" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\lib\asset-registry.ts" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\types\fidelity.ts" | Out-Null
+Assert-File "assets\templates\vite-react-shadcn\src\types\page.ts" | Out-Null
 Assert-File "demo\moni-react-app\package.json" | Out-Null
 Assert-File "demo\moni-react-app\package-lock.json" | Out-Null
 Assert-File "demo\moni-react-app\validate.ps1" | Out-Null
@@ -102,6 +136,9 @@ $openaiYaml = Get-Content -LiteralPath $openaiYamlPath -Raw -Encoding UTF8
 $assetReference = Get-Content -LiteralPath (Join-Path $root "references\asset-manifest-and-prompts.md") -Raw -Encoding UTF8
 $fidelityReference = Get-Content -LiteralPath (Join-Path $root "references\fidelity-asset-repair.md") -Raw -Encoding UTF8
 $fidelityContract = Get-Content -LiteralPath (Join-Path $root "references\high-fidelity-execution-contract.md") -Raw -Encoding UTF8
+$routingReference = Get-Content -LiteralPath (Join-Path $root "references\codex-capability-routing.md") -Raw -Encoding UTF8
+$architectureReference = Get-Content -LiteralPath (Join-Path $root "references\frontend-architecture-contract.md") -Raw -Encoding UTF8
+$iterationReference = Get-Content -LiteralPath (Join-Path $root "references\high-fidelity-iteration-tools.md") -Raw -Encoding UTF8
 $rootPackagePath = Join-Path $root "package.json"
 $rootPackageLockPath = Join-Path $root "package-lock.json"
 $templatePackagePath = Join-Path $root "assets\templates\vite-react-shadcn\package.json"
@@ -138,6 +175,8 @@ $docsForPs1InvocationCheck = @(
   $quickStartPath,
   (Join-Path $root "references\fidelity-asset-repair.md"),
   (Join-Path $root "references\high-fidelity-execution-contract.md"),
+  (Join-Path $root "references\frontend-architecture-contract.md"),
+  (Join-Path $root "references\high-fidelity-iteration-tools.md"),
   (Join-Path $root "demo\moni-react-app\README.md"),
   (Join-Path $root "demo\artmuse-ios\README.md"),
   (Join-Path $root "demo\marble-note\README.md")
@@ -163,8 +202,13 @@ Assert-True ($skill.Contains("Real Development Workflow")) "SKILL.md should cove
 Assert-True ($skill.Contains("assets/templates/vite-react-shadcn/")) "SKILL.md should mention the bundled React template"
 Assert-True ($skill.Contains("references/real-project-workflow.md")) "SKILL.md should reference the real project workflow"
 Assert-True ($skill.Contains("references/react-shadcn-workflow.md")) "SKILL.md should reference the React shadcn workflow"
+Assert-True ($skill.Contains("references/codex-capability-routing.md")) "SKILL.md should reference the Codex capability routing contract"
+Assert-True ($skill.Contains("references/frontend-architecture-contract.md")) "SKILL.md should reference the frontend architecture contract"
+Assert-True ($skill.Contains("Codex") -and $skill.Contains("imagegen") -and $skill.Contains("product-design:image-to-code")) "SKILL.md should define Codex capability reuse priority"
+Assert-True ($skill.Contains("src/components/primitives/") -and $skill.Contains("src/components/fidelity/")) "SKILL.md should define immutable architecture constraints"
 Assert-True ($skill.Contains("references/fidelity-asset-repair.md")) "SKILL.md should reference the fidelity asset repair workflow"
 Assert-True ($skill.Contains("references/high-fidelity-execution-contract.md")) "SKILL.md should reference the high-fidelity execution contract"
+Assert-True ($skill.Contains("references/high-fidelity-iteration-tools.md")) "SKILL.md should reference the high-fidelity iteration tools"
 Assert-True ($skill.Contains("validate-fidelity-plan.mjs")) "SKILL.md should require high-fidelity plan validation"
 Assert-True ($skill.Contains("compare-region-fidelity.mjs")) "SKILL.md should require region-level diff"
 Assert-True ($skill.Contains("audit-rendered-elements.mjs")) "SKILL.md should require rendered element audit"
@@ -184,6 +228,17 @@ Assert-True ($skill.Contains("vite --host 0.0.0.0")) "SKILL.md should document t
 Assert-True ($skill.Contains("Strict Fidelity Execution")) "SKILL.md should define the high-fidelity execution gate"
 Assert-True ($skill.Contains("image_gen-fallback")) "SKILL.md should define image_gen as fallback for high-fidelity assets"
 Assert-True ($skill.Contains("qualityGate: exact")) "SKILL.md should block image_gen fallback for exact assets"
+Assert-True ($skill.Contains("scripts/scaffold-react-project.mjs")) "SKILL.md should require scaffold script for new projects"
+Assert-True ($skill.Contains("architecture:check")) "SKILL.md should require architecture checking"
+Assert-True ($skill.Contains("deps:ensure")) "SKILL.md should require dependency install caching"
+Assert-True ($skill.Contains("build-asset-contact-sheet.mjs")) "SKILL.md should require asset contact sheet"
+Assert-True ($skill.Contains("diagnose-fidelity-diff.mjs")) "SKILL.md should require diff diagnosis"
+Assert-True ($skill.Contains("calibrate-theme.mjs")) "SKILL.md should require theme calibration"
+Assert-True ($skill.Contains("run-fidelity-loop.mjs")) "SKILL.md should require fidelity repair loop"
+Assert-True ($skill.Contains("PaymentOption") -and $skill.Contains("StatusTimeline") -and $skill.Contains("AgreementBar")) "SKILL.md should mention shared fidelity primitives"
+Assert-True ($skill.Contains("product-design:image-to-code")) "SKILL.md should mention Product Design reuse"
+Assert-True ($skill.Contains("Codex Browser")) "SKILL.md should mention Browser reuse"
+Assert-True (-not ($skill.Contains("src/components/app/"))) "SKILL.md should not keep the legacy src/components/app path"
 
 Assert-NoLatestDependency $rootPackage "Root fidelity tools"
 Assert-NoLatestDependency $templatePackage "React template"
@@ -196,11 +251,21 @@ Assert-True ($rootPackage.scripts."fidelity:capture".Contains("capture-fidelity.
 Assert-True ($rootPackage.scripts."fidelity:region-diff".Contains("compare-region-fidelity.mjs")) "Root package should expose fidelity:region-diff"
 Assert-True ($rootPackage.scripts."fidelity:elements".Contains("audit-rendered-elements.mjs")) "Root package should expose fidelity:elements"
 Assert-True ($rootPackage.scripts."fidelity:inspect".Contains("inspect-reference-image.mjs")) "Root package should expose fidelity:inspect"
+Assert-True ($rootPackage.scripts."architecture:check".Contains("check-frontend-architecture.mjs")) "Root package should expose architecture:check"
+Assert-True ($rootPackage.scripts."deps:ensure".Contains("ensure-project-deps.mjs")) "Root package should expose deps:ensure"
+Assert-True ($rootPackage.scripts."fidelity:contact-sheet".Contains("build-asset-contact-sheet.mjs")) "Root package should expose fidelity:contact-sheet"
+Assert-True ($rootPackage.scripts."fidelity:diagnose".Contains("diagnose-fidelity-diff.mjs")) "Root package should expose fidelity:diagnose"
+Assert-True ($rootPackage.scripts."fidelity:calibrate-theme".Contains("calibrate-theme.mjs")) "Root package should expose fidelity:calibrate-theme"
+Assert-True ($rootPackage.scripts."fidelity:loop".Contains("run-fidelity-loop.mjs")) "Root package should expose fidelity:loop"
+Assert-True ($rootPackage.scripts."fidelity:repair-queue".Contains("build-repair-queue.mjs")) "Root package should expose fidelity:repair-queue"
+Assert-True ($rootPackage.scripts."scaffold:react".Contains("scaffold-react-project.mjs")) "Root package should expose scaffold:react"
 Assert-True ($rootPackageLock.Contains('"sharp": "0.35.0"')) "Root lockfile should lock sharp"
 Assert-True ($rootPackageLock.Contains('"pixelmatch": "7.2.0"')) "Root lockfile should lock pixelmatch"
 Assert-True ($rootPackageLock.Contains('"potrace": "2.1.8"')) "Root lockfile should lock potrace"
 Assert-True ($templatePackage.scripts.dev.Contains("--host 0.0.0.0")) "React template dev script should bind to 0.0.0.0"
 Assert-True ($templatePackage.scripts.preview.Contains("--host 0.0.0.0")) "React template preview script should bind to 0.0.0.0"
+Assert-True ($templatePackage.scripts."architecture:check".Contains("check-frontend-architecture.mjs")) "React template should expose architecture:check"
+Assert-True ($templatePackage.scripts."deps:ensure".Contains("ensure-project-deps.mjs")) "React template should expose deps:ensure"
 Assert-True ($templatePackage.devDependencies.tailwindcss -eq "3.4.17") "React template should pin Tailwind 3.4.17"
 Assert-True ($templatePackage.devDependencies.vite -eq "5.4.11") "React template should pin Vite 5.4.11"
 Assert-True ($templatePackage.dependencies.react -eq "18.3.1") "React template should pin React 18.3.1"
@@ -246,6 +311,14 @@ Assert-True ($readme.Contains("prompt-component-refactor")) "README should inclu
 Assert-True ($readme.Contains("prompt-mobile-app")) "README should include mobile app prompt template"
 Assert-True ($readme.Contains("scripts\install-local.ps1")) "README should mention install script"
 Assert-True ($readme.Contains("assets/templates/vite-react-shadcn/")) "README should mention bundled React template"
+Assert-True ($readme.Contains("references/codex-capability-routing.md")) "README should mention Codex routing reference"
+Assert-True ($readme.Contains("references/frontend-architecture-contract.md")) "README should mention architecture contract"
+Assert-True ($readme.Contains("scripts/scaffold-react-project.mjs")) "README should mention React scaffold script"
+Assert-True ($readme.Contains("architecture:check")) "README should mention architecture check"
+Assert-True ($readme.Contains("asset contact sheet")) "README should mention asset contact sheet"
+Assert-True ($readme.Contains("diff diagnosis")) "README should mention diff diagnosis"
+Assert-True ($readme.Contains("theme calibration")) "README should mention theme calibration"
+Assert-True ($readme.Contains("fidelity loop")) "README should mention fidelity loop"
 Assert-True ($readme.Contains("demo/moni-react-app/")) "README should mention React demo"
 Assert-True ($readme.Contains("prompt-templates")) "README should include prompt templates"
 Assert-True ($readme.Contains("loose gate passed only")) "README should include strict fidelity prompt template"
@@ -258,7 +331,17 @@ Assert-True ($quickStart.Contains("element-manifest.json")) "QUICK_START should 
 Assert-True ($quickStart.Contains("icon-inventory.json")) "QUICK_START should mention icon inventory"
 Assert-True ($quickStart.Contains("0.06")) "QUICK_START should mention critical region cap"
 Assert-True ($quickStart.Contains("clean-reference.png")) "QUICK_START should mention clean reference handling"
+Assert-True ($quickStart.Contains("architecture:check")) "QUICK_START should mention architecture checking"
+Assert-True ($quickStart.Contains("scripts/scaffold-react-project.mjs")) "QUICK_START should mention scaffold script"
+Assert-True ($quickStart.Contains("asset contact sheet")) "QUICK_START should mention asset contact sheet"
+Assert-True ($quickStart.Contains("theme calibration")) "QUICK_START should mention theme calibration"
+Assert-True ($quickStart.Contains("fidelity loop")) "QUICK_START should mention fidelity loop"
 Assert-True ($openaiYaml.Contains("Vite + React + TypeScript + shadcn")) "agents/openai.yaml should mention the default React stack"
+Assert-True ($openaiYaml.Contains("Product Design")) "agents/openai.yaml should mention Product Design reuse"
+Assert-True ($openaiYaml.Contains("Codex Browser")) "agents/openai.yaml should mention Browser reuse"
+Assert-True ($openaiYaml.Contains("asset contact sheet")) "agents/openai.yaml should mention asset contact sheet"
+Assert-True ($openaiYaml.Contains("theme calibration")) "agents/openai.yaml should mention theme calibration"
+Assert-True ($openaiYaml.Contains("fidelity loop")) "agents/openai.yaml should mention fidelity loop"
 Assert-True ($readme.Contains("Vite + React + TypeScript + shadcn")) "README should mention the default React stack"
 Assert-True ($assetReference.Contains("React import")) "asset manifest reference should include React import guidance"
 Assert-True ($assetReference.Contains("src/assets/generated/")) "asset manifest reference should include generated asset path guidance"
@@ -286,6 +369,26 @@ Assert-True ($fidelityContract.Contains("inspect-reference-image.mjs")) "fidelit
 Assert-True ($fidelityContract.Contains("audit-rendered-elements.mjs")) "fidelity contract should define rendered element audit"
 Assert-True ($fidelityContract.Contains("maxDiffRatio <= 0.06")) "fidelity contract should cap critical region thresholds"
 Assert-True ($fidelityContract.Contains("strict gate passed")) "fidelity contract should define delivery status"
+Assert-True ($routingReference.Contains("imagegen")) "routing reference should define imagegen routing"
+Assert-True ($routingReference.Contains("Product Design")) "routing reference should define Product Design reuse"
+Assert-True ($routingReference.Contains("Codex Browser")) "routing reference should define Browser reuse"
+Assert-True ($routingReference.Contains("check-frontend-architecture.mjs")) "routing reference should mention architecture checker"
+Assert-True ($routingReference.Contains("diff-diagnosis.json")) "routing reference should mention diff diagnosis"
+Assert-True ($architectureReference.Contains("src/components/primitives")) "architecture contract should define primitives directory"
+Assert-True ($architectureReference.Contains("src/components/fidelity")) "architecture contract should define fidelity directory"
+Assert-True ($architectureReference.Contains("tokens.css")) "architecture contract should define tokens"
+Assert-True ($architectureReference.Contains("FidelityCanvas")) "architecture contract should define FidelityCanvas"
+Assert-True ($architectureReference.Contains("architecture:check")) "architecture contract should define architecture check"
+Assert-True ($architectureReference.Contains("deps:ensure")) "architecture contract should define dependency cache check"
+Assert-True ($iterationReference.Contains("build-asset-contact-sheet.mjs")) "iteration tools should document asset contact sheet"
+Assert-True ($iterationReference.Contains("diagnose-fidelity-diff.mjs")) "iteration tools should document diff diagnosis"
+Assert-True ($iterationReference.Contains("calibrate-theme.mjs")) "iteration tools should document theme calibration"
+Assert-True ($iterationReference.Contains("run-fidelity-loop.mjs")) "iteration tools should document fidelity loop"
+Assert-True ($iterationReference.Contains("PaymentOption")) "iteration tools should document shared primitives"
+Assert-True ($iterationReference.Contains("deps:ensure")) "iteration tools should document speed rules"
+
+$architectureReportPath = Join-Path ([IO.Path]::GetTempPath()) "moni-ui-template-architecture-report.json"
+& node (Join-Path $root "scripts\check-frontend-architecture.mjs") --project (Join-Path $root "assets\templates\vite-react-shadcn") --report $architectureReportPath --fail-on-error | Out-Null
 
 $targets = Get-RelativeMarkdownTargets $readme
 foreach ($target in $targets) {

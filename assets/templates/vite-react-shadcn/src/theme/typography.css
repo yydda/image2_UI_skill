@@ -1,0 +1,18 @@
+@layer base {
+  html {
+    text-rendering: geometricPrecision;
+  }
+
+  body {
+    font-feature-settings: "kern" 1, "tnum" 1;
+  }
+}
+
+@layer utilities {
+  .text-page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3vw, 3.75rem);
+    font-weight: 600;
+    line-height: 1.1;
+  }
+}

@@ -7,7 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "deps:ensure": "node scripts/ensure-project-deps.mjs",
+    "architecture:check": "node scripts/check-frontend-architecture.mjs --project ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "1.1.1",

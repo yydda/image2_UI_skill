@@ -1,0 +1,31 @@
+@layer base {
+  [data-theme="mobile-ios"] {
+    --background: 210 20% 98%;
+    --foreground: 220 24% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 24% 10%;
+    --primary: 212 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 92%;
+    --secondary-foreground: 220 24% 10%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 9% 42%;
+    --accent: 210 100% 96%;
+    --accent-foreground: 212 100% 37%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 212 100% 50%;
+    --brand: 212 100% 50%;
+    --brand-foreground: 0 0% 100%;
+    --brand-muted: 212 100% 96%;
+    --success: 142 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 37 95% 51%;
+    --warning-foreground: 0 0% 100%;
+    --surface: 210 20% 98%;
+    --surface-raised: 0 0% 100%;
+    --surface-subtle: 220 14% 94%;
+  }
+}

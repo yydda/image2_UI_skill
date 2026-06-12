@@ -1,0 +1,31 @@
+@layer base {
+  [data-theme="warm-finance"] {
+    --background: 36 38% 97%;
+    --foreground: 24 31% 13%;
+    --card: 38 43% 98%;
+    --card-foreground: 24 31% 13%;
+    --primary: 4 69% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 45% 93%;
+    --secondary-foreground: 24 31% 13%;
+    --muted: 32 39% 92%;
+    --muted-foreground: 25 16% 42%;
+    --accent: 23 58% 91%;
+    --accent-foreground: 14 63% 35%;
+    --destructive: 4 69% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 29 41% 86%;
+    --input: 29 41% 86%;
+    --ring: 4 69% 46%;
+    --brand: 4 69% 46%;
+    --brand-foreground: 0 0% 100%;
+    --brand-muted: 17 70% 94%;
+    --success: 158 51% 38%;
+    --success-foreground: 0 0% 100%;
+    --warning: 34 78% 43%;
+    --warning-foreground: 0 0% 100%;
+    --surface: 36 38% 97%;
+    --surface-raised: 38 43% 98%;
+    --surface-subtle: 37 54% 95%;
+  }
+}
