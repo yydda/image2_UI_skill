@@ -92,9 +92,21 @@ for (const asset of assets) {
       edgeOpaqueRatio: alpha.edgeOpaqueRatio,
     }
 
-    const requiredWidth = asset.targetPixels?.width ?? (asset.slotSize ? Math.ceil(asset.slotSize.width * 2) : null)
-    const requiredHeight =
-      asset.targetPixels?.height ?? (asset.slotSize ? Math.ceil(asset.slotSize.height * 2) : null)
+    const intentional1x =
+      String(asset.raw?.densityPolicy ?? asset.densityPolicy ?? "") === "source-1x-accepted" &&
+      Boolean(asset.raw?.downgradeReason ?? asset.downgradeReason)
+    const requiredWidth = maxNumber(
+      asset.targetPixels?.width,
+      asset.qualityGate === "exact" && !intentional1x && asset.slotSize
+        ? Math.ceil(asset.slotSize.width * 2)
+        : null,
+    )
+    const requiredHeight = maxNumber(
+      asset.targetPixels?.height,
+      asset.qualityGate === "exact" && !intentional1x && asset.slotSize
+        ? Math.ceil(asset.slotSize.height * 2)
+        : null,
+    )
 
     if (requiredWidth && metadata.width < requiredWidth) {
       failures.push(`asset width ${metadata.width} is below required width ${requiredWidth}`)
@@ -112,6 +124,15 @@ for (const asset of assets) {
       } else if (!alpha.transparentCorners) {
         failures.push("transparentRequired asset corners are not transparent")
       }
+    }
+
+    const alphaPolicy = String(asset.raw?.alphaPolicy ?? asset.alphaPolicy ?? "").toLowerCase()
+    if (alphaPolicy.includes("alpha") && !metadata.hasAlpha) {
+      failures.push(`alphaPolicy '${alphaPolicy}' requires an alpha channel`)
+    }
+
+    if (asset.qualityGate === "exact" && intentional1x) {
+      warnings.push("exact asset accepted below 2x only because densityPolicy=source-1x-accepted and downgradeReason are set")
     }
   }
 
@@ -151,6 +172,11 @@ async function readOptionalJson(filePath) {
   } catch {
     return null
   }
+}
+
+function maxNumber(...values) {
+  const numbers = values.filter((value) => Number.isFinite(Number(value))).map(Number)
+  return numbers.length ? Math.max(...numbers) : null
 }
 
 async function alphaMetrics(filePath) {

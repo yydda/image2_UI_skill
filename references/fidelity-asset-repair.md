@@ -89,10 +89,12 @@ Run these from the project using the skill:
 ```powershell
 .\scripts\setup-fidelity-tools.cmd
 node scripts/inspect-reference-image.mjs --source <design.png> --out-dir tmp/fidelity/reference-preflight --fail-on-contamination
-node scripts/validate-fidelity-plan.mjs --blueprint tmp/fidelity/page-blueprint.json --layout tmp/fidelity/layout-manifest.json --assets assets.manifest.json --elements tmp/fidelity/element-manifest.json --icons tmp/fidelity/icon-inventory.json --interactions tmp/fidelity/interaction-map.json --mode strict
+node scripts/validate-fidelity-plan.mjs --blueprint tmp/fidelity/page-blueprint.json --layout tmp/fidelity/layout-manifest.json --assets assets.manifest.json --elements tmp/fidelity/element-manifest.json --icons tmp/fidelity/icon-inventory.json --interactions tmp/fidelity/interaction-map.json --mode strict --fail-on-error
 node scripts/extract-reference-assets.mjs --manifest <manifest.json> --source <design.png>
 node scripts/repair-asset.mjs --manifest <manifest.json>
-node scripts/score-asset.mjs --manifest <manifest.json>
+node scripts/score-asset.mjs --manifest <manifest.json> --fail-on-reject
+node scripts/build-asset-contact-sheet.mjs --manifest <manifest.json> --source tmp/fidelity/clean-reference.png --fail-on-review
+node scripts/validate-fidelity-plan.mjs --blueprint tmp/fidelity/page-blueprint.json --layout tmp/fidelity/layout-manifest.json --assets assets.manifest.json --elements tmp/fidelity/element-manifest.json --icons tmp/fidelity/icon-inventory.json --interactions tmp/fidelity/interaction-map.json --mode strict --enforce-asset-acceptance --fail-on-error
 node scripts/capture-fidelity.mjs --url <local-url> --reference <design.png> --out-dir tmp/fidelity/final --compare --regions tmp/fidelity/layout-manifest.json --elements tmp/fidelity/element-manifest.json
 node scripts/compare-fidelity.mjs --reference <design.png> --actual <screenshot.png>
 node scripts/compare-region-fidelity.mjs --reference <design.png> --actual <screenshot.png> --regions tmp/fidelity/layout-manifest.json --critical-max-diff-ratio 0.06
@@ -114,13 +116,16 @@ Use `capture-fidelity.mjs` when Playwright is installed in the target project; p
 - If the asset is supposed to be transparent, reject white/cream matte backgrounds. A fake matching background is only allowed when explicitly marked `background-matched`.
 - For translucent decorations and line art, preserve alpha gradients instead of thresholding everything into hard edges.
 - Crop with safe padding when shadows or soft edges exist, then fit the asset into a CSS slot with `object-fit: contain`.
+- Do not integrate an exact asset into React until its manifest status is `accepted`, its contact sheet row is clean, and `score-asset.mjs --fail-on-reject` passes.
 
 ## Scoring And Rejection
 
 Reject an asset when:
 
 - final raster pixels are smaller than `targetPixels`
+- exact assets are smaller than 2x the CSS slot without `densityPolicy: "source-1x-accepted"` and a documented `downgradeReason`
 - `transparentRequired` is true but no alpha channel or transparent corners exist
+- `alphaPolicy` includes alpha but the exported file has no alpha channel
 - alpha-heavy exact assets contain matte edges, white/cream backgrounds, hard cutouts, or dirty borders beyond the accepted threshold
 - `qualityGate: exact` uses `image_gen-fallback`
 - vector rebuild output is not valid SVG

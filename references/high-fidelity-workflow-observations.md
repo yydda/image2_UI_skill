@@ -4,6 +4,8 @@ Date: 2026-06-11
 
 Observed thread: `codex://threads/019eb6e1-dbb5-7ab0-bed9-c6b745fe6cc7`
 
+Latest observed thread: `codex://threads/019ebaff-0e4f-7912-bd6a-7181cc835ce4`
+
 Reference task:
 
 ```text
@@ -31,6 +33,44 @@ Observed facts:
 - Browser automation had transient tab/session errors. The workflow should use a stable Playwright script in the generated project instead of ad hoc browser REPL calls when fidelity is required.
 - The run validated interactions, but interaction validation happened late and was not tied to a declared interaction map.
 - The run took about 18.6 minutes. Some time went to environment setup and brittle browser control retries; this supports adding a deterministic capture script and reusing the installed skill tooling instead of copying/debugging ad hoc flow each time.
+
+## 2026-06-12 Regression Findings
+
+The later test thread used more of the Moni workflow, but still missed strict 1:1 because the gates were too permissive.
+
+Observed project: `C:\Users\85013\Documents\MyCode\demo\confirm-order-page`
+
+Evidence from the run:
+
+- Reference image: `tmp/fidelity/clean-reference.png`.
+- Final screenshot: `tmp/fidelity/capture-3/page.png`.
+- Page diff: about `8.03%`, which fails the strict `5%` page gate.
+- Worst region diffs included breadcrumb `24.75%`, page-title `19.99%`, payment-methods `11.40%`, payment-bar `11.21%`, notice-banner `11.15%`, order-card `10.62%`, status-panel `9.69%`, and bottom-trust-bar `8.66%`.
+- The run did use foundation scaffold, preflight, manifests, crop assets, asset contact sheet, theme calibration, React implementation, architecture/type/build, Playwright screenshot/diff/DOM audit, repair queue, fidelity loop, interaction smoke, and mobile smoke.
+- The run did not close the asset repair loop: all eight extracted assets were still effectively `needs-repair`/not accepted, but the implementation consumed them anyway.
+- Extracted exact assets were mostly 1x RGB without alpha, for example payment/logo/illustration crops. This is acceptable only with an explicit `source-1x-accepted` downgrade and evidence, not as a default.
+- Theme calibration sampled asset colors and selected a blue brand color from a payment icon. Theme sampling must exclude crop boxes from `assets.manifest.json`.
+- Font handling did not self-host a closer font. DOM audit showed overflow and width drift in breadcrumb, page title/subtitle, card titles, price, status title, and payment agreement text.
+- `diff diagnosis` was effectively skipped in the loop state, so the repair queue was not driven by root-cause categories.
+
+Root causes:
+
+- Asset contact sheet and asset score were reports, not blocking gates.
+- `validate-fidelity-plan.mjs` did not enforce accepted asset status before React integration.
+- `score-asset.mjs` allowed exact assets below 2x without a formal downgrade policy.
+- `calibrate-theme.mjs` did not exclude asset crop areas, so isolated payment/icon colors polluted semantic tokens.
+- The loop default stopped too early and did not combine diagnosis + queue into one prioritized focus list.
+- Text overflow in critical typography targets was treated like generic layout drift instead of font/token calibration.
+
+Implemented guardrails after this run:
+
+- Contact sheet now supports `--fail-on-review` and rejects unaccepted exact assets, missing alpha, low-density exact outputs, and missing `backgroundColor` for background-matched assets.
+- Asset scoring now rejects exact assets below 2x unless `densityPolicy: "source-1x-accepted"` and `downgradeReason` are present.
+- Plan validation can enforce asset acceptance with `--enforce-asset-acceptance`.
+- Theme calibration accepts `--assets assets.manifest.json` and excludes crop boxes from palette sampling.
+- Repair queue accepts `--diagnosis-report` and includes blocked asset statuses.
+- Fidelity loop defaults to six iterations and combines diagnosis and queue focus items.
+- Element diagnosis treats overflow in title, price, agreement, breadcrumb, status, notice, and CTA targets as typography calibration work.
 
 ## Diagnosis
 

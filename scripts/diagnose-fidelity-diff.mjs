@@ -99,14 +99,15 @@ async function addElementFindings(filePath) {
   const report = await readJson(filePath)
   for (const failure of report.failures ?? []) {
     const target = extractQuotedId(failure) ?? "element"
+    const category = classifyElementFailure(failure, target)
     findings.push({
       id: `element:${target}:${findings.length + 1}`,
-      category: classifyText(failure, "layout"),
+      category,
       priority: failure.includes("overlap") || failure.includes("overflow") ? 90 : 82,
       source: filePath,
       target,
       reason: failure,
-      suggestedAction: suggestedActionForElement(failure),
+      suggestedAction: suggestedActionForElement(failure, target, category),
     })
   }
   for (const warning of report.warnings ?? []) {
@@ -126,7 +127,9 @@ async function addAssetFindings(filePath) {
   const report = await readJson(filePath)
   const assets = report.assets ?? []
   for (const asset of assets) {
-    if (asset.pass !== false && asset.ok !== false && !asset.failures?.length) {
+    const status = String(asset.status ?? "").toLowerCase()
+    const blockedStatus = ["needs-repair", "needs-review", "needs-regenerate", "rejected", "failed"].includes(status)
+    if (asset.pass !== false && asset.ok !== false && !asset.failures?.length && !blockedStatus) {
       continue
     }
     findings.push({
@@ -135,7 +138,7 @@ async function addAssetFindings(filePath) {
       priority: asset.qualityGate === "exact" ? 88 : 74,
       source: filePath,
       target: String(asset.id ?? asset.assetPath ?? "asset"),
-      reason: (asset.failures ?? ["asset scoring failed"]).join("; "),
+      reason: (asset.failures?.length ? asset.failures : [`asset status '${asset.status ?? "unknown"}' is not accepted`]).join("; "),
       evidence: {
         assetPath: asset.assetPath ?? null,
         metrics: asset.metrics ?? null,
@@ -147,13 +150,23 @@ async function addAssetFindings(filePath) {
 
 function classifyText(value, fallback) {
   const text = String(value).toLowerCase()
-  if (text.includes("font") || text.includes("text") || text.includes("title") || text.includes("price")) return "font"
   if (text.includes("overflow") || text.includes("overlap")) return "overflow"
+  if (text.includes("font") || text.includes("text") || text.includes("title") || text.includes("price")) return "font"
   if (text.includes("asset") || text.includes("logo") || text.includes("icon") || text.includes("illustration")) return "asset"
   if (text.includes("color") || text.includes("shadow") || text.includes("background")) return "token"
   if (text.includes("position") || text.includes("size") || text.includes("layout")) return "layout"
   if (text.includes("spacing") || text.includes("padding") || text.includes("margin")) return "spacing"
   return fallback
+}
+
+function classifyElementFailure(message, target = "") {
+  const text = String(message).toLowerCase()
+  if (text.includes("overlap")) return "overflow"
+  if (text.includes("overflow") && isTypographyTarget(target)) return "font"
+  if (text.includes("overflow")) return "overflow"
+  if (text.includes("font") || text.includes("line-height") || text.includes("font-size")) return "font"
+  if (text.includes("position") || text.includes("size") || text.includes("selector")) return "layout"
+  return classifyText(message, "layout")
 }
 
 function suggestedActionForRegion(target) {
@@ -164,11 +177,32 @@ function suggestedActionForRegion(target) {
   return "Inspect the region crop, then adjust only the owning component's grid, dimensions, padding, or positioning."
 }
 
-function suggestedActionForElement(failure) {
-  const category = classifyText(failure, "layout")
-  if (category === "overflow") return "Increase the text slot, reduce font size/weight, or match wrapping rules; rerun DOM audit."
-  if (category === "font") return "Tune typography tokens and measured text styles; verify font-size and line-height in DOM audit."
+function suggestedActionForElement(failure, target = "", category = classifyElementFailure(failure, target)) {
+  if (category === "overflow") return "Increase the text slot, adjust wrapping rules, or declare a valid overlap group; rerun DOM audit."
+  if (category === "font") return "Treat this as a typography calibration task: compare the local crop, self-host a closer official/open-source font if needed, tune font family, size, weight, line-height, and text slot width, then rerun DOM audit."
   return "Move or resize the mapped element to match element-manifest coordinates; avoid changing unrelated regions."
+}
+
+function isTypographyTarget(target) {
+  const value = String(target ?? "").toLowerCase()
+  return [
+    "title",
+    "subtitle",
+    "price",
+    "amount",
+    "agreement",
+    "protocol",
+    "button",
+    "cta",
+    "breadcrumb",
+    "status",
+    "timeline",
+    "notice",
+    "summary",
+    "label",
+    "copy",
+    "text",
+  ].some((keyword) => value.includes(keyword))
 }
 
 function formatRatio(value) {

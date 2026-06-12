@@ -4,7 +4,7 @@ import { ensureDir, parseArgs, readJson, writeJson } from "./fidelity-lib.mjs"
 
 const args = parseArgs()
 const iteration = Number(args.iteration ?? 1)
-const maxIterations = Number(args["max-iterations"] ?? 3)
+const maxIterations = Number(args["max-iterations"] ?? 6)
 const outputPath = path.resolve(String(args.out ?? "tmp/fidelity/fidelity-loop-state.json"))
 const queuePath = args.queue ? path.resolve(String(args.queue)) : null
 const diagnosisPath = args.diagnosis ? path.resolve(String(args.diagnosis)) : null
@@ -31,6 +31,9 @@ const report = {
     : [
         "Fix only the listed focus items before touching unrelated regions.",
         "Prefer asset repair for asset failures, token calibration for color/typography failures, and local component layout edits for box drift.",
+        diagnosisPath && !diagnosis
+          ? "The supplied diagnosis report was not readable; rerun diagnose-fidelity-diff before the next repair pass."
+          : "Use diagnosis categories to fix root causes instead of treating every mismatch as layout.",
         "Capture a new screenshot after fixes, rerun page diff, region diff, DOM audit, asset score, diagnosis, repair queue, and this loop state.",
         canContinue
           ? `Continue to iteration ${iteration + 1} after fixes.`
@@ -55,35 +58,48 @@ async function readOptionalJson(filePath) {
 }
 
 function normalizeTasks(queue, diagnosis) {
+  const combined = []
+  if (Array.isArray(diagnosis?.topFocus) || Array.isArray(diagnosis?.findings)) {
+    combined.push(...(diagnosis.topFocus ?? diagnosis.findings).map((finding) => ({
+      id: String(finding.id ?? finding.target ?? "finding"),
+      category: finding.category ?? "unknown",
+      priority: Number(finding.priority ?? 50) + 3,
+      target: String(finding.target ?? finding.id ?? "unknown"),
+      reason: finding.reason ?? "diagnosed mismatch",
+      nextAction: finding.suggestedAction ?? "Repair and rerun fidelity gates.",
+    })))
+  }
   if (Array.isArray(queue?.tasks)) {
-    return queue.tasks.map((task) => ({
+    combined.push(...queue.tasks.map((task) => ({
       id: String(task.id ?? task.target ?? "task"),
       category: task.category ?? "unknown",
       priority: Number(task.priority ?? 50),
       target: String(task.target ?? task.id ?? "unknown"),
       reason: task.reason ?? "queued repair",
       nextAction: task.nextAction ?? task.suggestedAction ?? "Repair and rerun fidelity gates.",
-    }))
+    })))
   }
-  if (Array.isArray(diagnosis?.findings)) {
-    return diagnosis.findings.map((finding) => ({
-      id: String(finding.id ?? finding.target ?? "finding"),
-      category: finding.category ?? "unknown",
-      priority: Number(finding.priority ?? 50),
-      target: String(finding.target ?? finding.id ?? "unknown"),
-      reason: finding.reason ?? "diagnosed mismatch",
-      nextAction: finding.suggestedAction ?? "Repair and rerun fidelity gates.",
-    }))
+  return dedupeTasks(combined).sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id))
+}
+
+function dedupeTasks(tasks) {
+  const byKey = new Map()
+  for (const task of tasks) {
+    const key = `${task.category}:${task.target}`
+    const existing = byKey.get(key)
+    if (!existing || task.priority > existing.priority) {
+      byKey.set(key, task)
+    }
   }
-  return []
+  return [...byKey.values()]
 }
 
 function buildNextCommands(args) {
   const commands = []
   if (args["page-report"] || args["region-report"] || args["element-report"] || args["asset-report"]) {
     commands.push("node scripts/diagnose-fidelity-diff.mjs --page-report <page> --region-report <regions> --element-report <elements> --asset-report <assets>")
-    commands.push("node scripts/build-repair-queue.mjs --page-report <page> --region-report <regions> --element-report <elements> --asset-report <assets>")
+    commands.push("node scripts/build-repair-queue.mjs --page-report <page> --region-report <regions> --element-report <elements> --asset-report <assets> --diagnosis-report tmp/fidelity/diff-diagnosis.json")
   }
-  commands.push("node scripts/run-fidelity-loop.mjs --queue tmp/fidelity/repair-queue.json --diagnosis tmp/fidelity/diff-diagnosis.json")
+  commands.push("node scripts/run-fidelity-loop.mjs --queue tmp/fidelity/repair-queue.json --diagnosis tmp/fidelity/diff-diagnosis.json --max-iterations 6")
   return commands
 }

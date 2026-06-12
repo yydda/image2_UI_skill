@@ -10,22 +10,24 @@ const elementsPath = args.elements ? path.resolve(String(args.elements)) : null
 const cssPath = path.resolve(String(args.out ?? "tmp/fidelity/theme-calibration.css"))
 const reportPath = path.resolve(String(args.report ?? "tmp/fidelity/theme-calibration.json"))
 const sampleSize = Number(args["sample-size"] ?? 96)
+const assetsPath = args.assets ? path.resolve(String(args.assets)) : null
 
 const metadata = await sharp(referencePath).metadata()
+const excludedBoxes = assetsPath ? await readExcludedAssetBoxes(assetsPath) : []
 const { data, info } = await sharp(referencePath)
   .resize(sampleSize, sampleSize, { fit: "inside" })
   .ensureAlpha()
   .raw()
   .toBuffer({ resolveWithObject: true })
 
-const colors = collectColors(data, info)
+const colors = collectColors(data, info, metadata, excludedBoxes)
 const edges = collectEdgeColors(data, info)
 const dominant = colors.slice(0, 8)
 const background = averageColor(edges.length ? edges : dominant)
 const dark = nearestByLuminance(colors, 0.12) ?? { r: 24, g: 24, b: 24 }
 const muted = nearestByLuminance(colors, 0.44) ?? { r: 104, g: 104, b: 104 }
-const border = nearestByLuminance(colors, 0.82) ?? background
-const brand = mostSaturated(colors) ?? dark
+const border = warmBorder(colors) ?? nearestByLuminance(colors, 0.82) ?? background
+const brand = preferredAccent(colors) ?? mostSaturated(colors) ?? dark
 const typography = elementsPath ? await inferTypography(elementsPath) : {}
 
 const tokens = {
@@ -56,7 +58,9 @@ const report = {
   tool: "calibrate-theme",
   referencePath,
   elementsPath,
+  assetsPath,
   referenceSize: { width: metadata.width, height: metadata.height },
+  excludedBoxes: excludedBoxes.map((box) => ({ id: box.id, x: box.x, y: box.y, width: box.width, height: box.height })),
   sampledColors: dominant.map((color) => ({ ...color, hsl: toHslToken(color), hex: toHex(color) })),
   selected: {
     background: { ...background, hsl: tokens.background, hex: toHex(background) },
@@ -74,9 +78,17 @@ await fs.writeFile(cssPath, renderCss(tokens, typography), "utf8")
 await writeJson(reportPath, report)
 console.log(JSON.stringify(report, null, 2))
 
-function collectColors(buffer, imageInfo) {
+function collectColors(buffer, imageInfo, sourceInfo, boxes = []) {
   const bins = new Map()
+  const scaleX = imageInfo.width / sourceInfo.width
+  const scaleY = imageInfo.height / sourceInfo.height
   for (let offset = 0; offset < buffer.length; offset += imageInfo.channels) {
+    const pixelIndex = offset / imageInfo.channels
+    const x = pixelIndex % imageInfo.width
+    const y = Math.floor(pixelIndex / imageInfo.width)
+    const sourceX = x / scaleX
+    const sourceY = y / scaleY
+    if (boxes.some((box) => pointInBox(sourceX, sourceY, box))) continue
     const alpha = buffer[offset + 3]
     if (alpha < 200) continue
     const r = buffer[offset]
@@ -105,6 +117,32 @@ function collectColors(buffer, imageInfo) {
       }
     })
     .sort((a, b) => b.count - a.count)
+}
+
+async function readExcludedAssetBoxes(filePath) {
+  const manifest = await readJson(filePath)
+  const assets = Array.isArray(manifest.assets) ? manifest.assets : Array.isArray(manifest) ? manifest : []
+  return assets
+    .filter((asset) => {
+      const type = String(asset.type ?? "").toLowerCase()
+      const strategy = String(asset.sourceStrategy ?? asset["source strategy"] ?? "").toLowerCase()
+      return strategy.includes("crop") || /logo|brand|payment|icon|illustration|line-art|asset/.test(type)
+    })
+    .map((asset) => {
+      const box = asset.cropBox ?? asset["crop box"] ?? {}
+      return {
+        id: String(asset.id ?? "asset"),
+        x: Number(box.x ?? 0),
+        y: Number(box.y ?? 0),
+        width: Number(box.width ?? box.w ?? 0),
+        height: Number(box.height ?? box.h ?? 0),
+      }
+    })
+    .filter((box) => Number.isFinite(box.x) && Number.isFinite(box.y) && box.width > 0 && box.height > 0)
+}
+
+function pointInBox(x, y, box) {
+  return x >= box.x && y >= box.y && x <= box.x + box.width && y <= box.y + box.height
 }
 
 function collectEdgeColors(buffer, imageInfo) {
@@ -157,6 +195,9 @@ ${tokenLines.join("\n")}
 }
 
 function averageColor(colors) {
+  if (!colors.length) {
+    return { r: 250, g: 248, b: 244 }
+  }
   const total = colors.reduce(
     (accumulator, color) => ({
       r: accumulator.r + color.r * (color.count ?? 1),
@@ -183,6 +224,32 @@ function mostSaturated(colors) {
   return colors
     .filter((color) => color.count > 2 && luminance(color) > 0.15 && luminance(color) < 0.75)
     .sort((a, b) => rgbToHsl(b).s - rgbToHsl(a).s)[0]
+}
+
+function preferredAccent(colors) {
+  return colors
+    .filter((color) => {
+      const hsl = rgbToHsl(color)
+      return color.count > 2 &&
+        luminance(color) > 0.08 &&
+        luminance(color) < 0.65 &&
+        hsl.s > 0.28 &&
+        (hsl.h <= 45 || hsl.h >= 330)
+    })
+    .sort((a, b) => b.count * rgbToHsl(b).s - a.count * rgbToHsl(a).s)[0]
+}
+
+function warmBorder(colors) {
+  return colors
+    .filter((color) => {
+      const hsl = rgbToHsl(color)
+      return color.count > 2 &&
+        luminance(color) > 0.65 &&
+        luminance(color) < 0.9 &&
+        hsl.s < 0.45 &&
+        (hsl.h <= 65 || hsl.h >= 330)
+    })
+    .sort((a, b) => Math.abs(luminance(a) - 0.78) - Math.abs(luminance(b) - 0.78))[0]
 }
 
 function lighten(color, amount) {

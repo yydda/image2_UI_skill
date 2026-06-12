@@ -9,8 +9,8 @@ This demo shows the expected Moni UI React delivery shape:
 
 Run static validation:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\validate.ps1
+```bat
+.\validate.cmd
 ```
 
 Run a full build after installing dependencies:

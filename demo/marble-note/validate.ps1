@@ -2,6 +2,8 @@ $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+$nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+$staticServer = Join-Path (Split-Path -Parent (Split-Path -Parent $root)) "scripts\serve-static.mjs"
 
 function Assert-True($condition, $message) {
   if (-not $condition) {
@@ -40,6 +42,8 @@ Assert-True (Test-Path -LiteralPath (Join-Path $root "index.html")) "Missing ind
 Assert-True (Test-Path -LiteralPath (Join-Path $root "styles.css")) "Missing styles.css"
 Assert-True (Test-Path -LiteralPath (Join-Path $root "script.js")) "Missing script.js"
 Assert-True (Test-Path -LiteralPath $chrome) "Chrome not found at $chrome"
+Assert-True $nodeCommand "Node.js is required to run the local preview server"
+Assert-True (Test-Path -LiteralPath $staticServer) "Missing static server helper: $staticServer"
 
 $html = Get-Content -LiteralPath (Join-Path $root "index.html") -Raw
 Assert-True (-not ($html -match "https?://")) "Demo should not depend on remote URLs"
@@ -53,7 +57,7 @@ if ($existing) {
   $existing | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
 }
 
-$server = Start-Process -FilePath python -ArgumentList @("-m", "http.server", "$port", "--bind", "127.0.0.1") -WorkingDirectory $root -WindowStyle Hidden -PassThru
+$server = Start-Process -FilePath $nodeCommand.Source -ArgumentList @($staticServer, $root, "$port", "127.0.0.1") -WorkingDirectory $root -WindowStyle Hidden -PassThru
 $chromeProcess = $null
 
 try {

@@ -25,7 +25,8 @@ node scripts/validate-fidelity-plan.mjs `
   --elements tmp/fidelity/element-manifest.json `
   --icons tmp/fidelity/icon-inventory.json `
   --interactions tmp/fidelity/interaction-map.json `
-  --mode strict
+  --mode strict `
+  --fail-on-error
 ```
 
 If this fails, fix the plan before writing page code.
@@ -224,6 +225,43 @@ If a previous or initial plan used 2x/upscale and a later plan switches to 1x/no
   "targetPath": "src/assets/original/repaired/brand-lockup.png"
 }
 ```
+
+## Asset Acceptance Gate
+
+Planning an asset is not enough. Before a strict React implementation may consume exact assets, run the repair and scoring gates:
+
+```powershell
+node scripts/extract-reference-assets.mjs `
+  --manifest assets.manifest.json `
+  --source tmp/fidelity/clean-reference.png
+
+node scripts/repair-asset.mjs `
+  --manifest assets.manifest.json
+
+node scripts/score-asset.mjs `
+  --manifest assets.manifest.json `
+  --fail-on-reject
+
+node scripts/build-asset-contact-sheet.mjs `
+  --manifest assets.manifest.json `
+  --source tmp/fidelity/clean-reference.png `
+  --fail-on-review
+
+node scripts/validate-fidelity-plan.mjs `
+  --blueprint tmp/fidelity/page-blueprint.json `
+  --layout tmp/fidelity/layout-manifest.json `
+  --assets assets.manifest.json `
+  --elements tmp/fidelity/element-manifest.json `
+  --icons tmp/fidelity/icon-inventory.json `
+  --interactions tmp/fidelity/interaction-map.json `
+  --mode strict `
+  --enforce-asset-acceptance `
+  --fail-on-error
+```
+
+Only set an asset to `status: "accepted"` after the repaired/vector output passes score, contact-sheet review, alpha checks, and 2x density requirements. If an exact screenshot crop must remain 1x for lower pixel diff, set `densityPolicy: "source-1x-accepted"` plus `downgradeReason` and record the diff evidence.
+
+Do not compensate for failed assets with CSS nudges. Fix crop boxes, alpha extraction, vector rebuilds, output density, or background matching first.
 
 ## Required Font Handling
 

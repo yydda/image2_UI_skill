@@ -4,9 +4,9 @@ Responsive, clickable iOS-style prototype for a creative notebook mobile app.
 
 ## Run
 
-```powershell
+```bat
 cd demo/marble-note
-python -m http.server 4190 --bind 127.0.0.1
+node ..\..\scripts\serve-static.mjs . 4190 127.0.0.1
 ```
 
 Open:
@@ -35,8 +35,8 @@ http://127.0.0.1:4190/
 
 ## Validate
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File demo/marble-note/validate.ps1
+```bat
+demo\marble-note\validate.cmd
 ```
 
 The validation checks page startup, screenshot creation, the cover/home/detail flow, all added logical pages (`folder`, `search`, `create`, `schedule`, `settings`), iOS frame details, local images, and broken image count.

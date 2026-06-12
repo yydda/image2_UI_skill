@@ -407,20 +407,23 @@ function validateAsset(asset, previousAsset, fidelityMode, failures, warnings) {
     failures.push(`asset '${asset.id}' is missing targetPixels`)
   }
 
-  if (slotSize && targetPixels && fidelityMode !== "screenshot-exact") {
-    if (targetPixels.width < Math.ceil(slotSize.width * 2) || targetPixels.height < Math.ceil(slotSize.height * 2)) {
+  if (slotSize && targetPixels) {
+    const below2x = targetPixels.width < Math.ceil(slotSize.width * 2) || targetPixels.height < Math.ceil(slotSize.height * 2)
+    const allows1x = asset.raw.densityPolicy === "source-1x-accepted" && Boolean(asset.raw.downgradeReason)
+    if (asset.qualityGate === "exact" && below2x && !allows1x) {
+      failures.push(`exact asset '${asset.id}' targetPixels must be at least 2x slotSize`)
+    } else if (below2x && fidelityMode !== "screenshot-exact") {
       warnings.push(`asset '${asset.id}' targetPixels is below 2x slotSize outside screenshot-exact mode`)
     }
   }
 
-  if (slotSize && targetPixels && fidelityMode === "screenshot-exact") {
-    const below2x = targetPixels.width < Math.ceil(slotSize.width * 2) || targetPixels.height < Math.ceil(slotSize.height * 2)
-    const allows1x =
-      asset.raw.densityPolicy === "screenshot-exact" ||
-      asset.raw.downgradeReason ||
-      asset.sourceStrategy === "original-crop"
-    if (asset.qualityGate === "exact" && below2x && !allows1x) {
-      warnings.push(`exact asset '${asset.id}' is below 2x; add densityPolicy or downgradeReason if intentional`)
+  const status = String(asset.raw.status ?? asset.status ?? "").toLowerCase()
+  if (["needs-repair", "needs-review", "needs-regenerate", "rejected", "failed"].includes(status)) {
+    const message = `asset '${asset.id}' status '${status}' must be accepted before final React integration`
+    if (args["enforce-asset-acceptance"]) {
+      failures.push(message)
+    } else {
+      warnings.push(message)
     }
   }
 

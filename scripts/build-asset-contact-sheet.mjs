@@ -24,16 +24,29 @@ const { assets, manifestDir } = await readManifest(manifestPath)
 const cards = []
 for (const asset of assets) {
   const preview = await makePreview(asset)
+  const metrics = await inspectPreview(preview)
   const failures = []
 
   if (!preview.src) {
     failures.push("no existing asset/crop preview")
+  }
+  if (assetNeedsAcceptance(asset) && !args["allow-unaccepted"]) {
+    failures.push(`asset status '${asset.status ?? "missing"}' is not accepted`)
   }
   if (asset.qualityGate === "exact" && asset.sourceStrategy === "image_gen-fallback") {
     failures.push("exact asset cannot use image_gen-fallback")
   }
   if (asset.transparentRequired && asset.backgroundMatched) {
     failures.push("transparentRequired conflicts with backgroundMatched")
+  }
+  if (asset.backgroundMatched && !asset.backgroundColor) {
+    failures.push("backgroundMatched assets must record backgroundColor")
+  }
+  if (isBelow2x(asset) && !allowsIntentional1x(asset)) {
+    failures.push("targetPixels must be at least 2x slotSize for exact assets")
+  }
+  if (requiresAlpha(asset) && metrics && metrics.hasAlpha === false) {
+    failures.push("asset requires alpha but preview file has no alpha channel")
   }
 
   cards.push({
@@ -51,6 +64,7 @@ for (const asset of assets) {
     qualityGate: asset.qualityGate,
     status: failures.length ? "needs-review" : asset.status,
     preview,
+    metrics,
     failures,
   })
 }
@@ -110,6 +124,60 @@ async function makePreview(asset) {
   return { kind: "missing", path: null, src: null }
 }
 
+async function inspectPreview(preview) {
+  if (!preview?.path || preview.kind !== "file") {
+    return null
+  }
+  try {
+    const metadata = await sharp(preview.path).metadata()
+    return {
+      width: metadata.width,
+      height: metadata.height,
+      channels: metadata.channels,
+      hasAlpha: Boolean(metadata.hasAlpha),
+      format: metadata.format,
+    }
+  } catch {
+    return null
+  }
+}
+
+function assetNeedsAcceptance(asset) {
+  const status = String(asset.status ?? "").toLowerCase()
+  return ["needs-repair", "needs-review", "needs-regenerate", "rejected", "failed"].includes(status)
+}
+
+function requiresAlpha(asset) {
+  const alphaPolicy = String(asset.alphaPolicy ?? asset.raw?.alphaPolicy ?? "").toLowerCase()
+  return Boolean(asset.transparentRequired) || alphaPolicy.includes("alpha")
+}
+
+function isBelow2x(asset) {
+  if (asset.qualityGate !== "exact") {
+    return false
+  }
+  const slot = size(asset.slotSize)
+  const target = size(asset.targetPixels)
+  if (!slot || !target) {
+    return false
+  }
+  return target.width < Math.ceil(slot.width * 2) || target.height < Math.ceil(slot.height * 2)
+}
+
+function allowsIntentional1x(asset) {
+  return String(asset.densityPolicy ?? asset.raw?.densityPolicy ?? "") === "source-1x-accepted" &&
+    Boolean(asset.downgradeReason ?? asset.raw?.downgradeReason)
+}
+
+function size(value) {
+  if (!value) {
+    return null
+  }
+  const width = Number(value.width ?? value.w)
+  const height = Number(value.height ?? value.h)
+  return Number.isFinite(width) && Number.isFinite(height) ? { width, height } : null
+}
+
 function resolveFromManifest(maybePath) {
   return resolvePath(manifestDir, maybePath) ?? resolvePath(process.cwd(), maybePath)
 }
@@ -158,6 +226,7 @@ function renderHtml(report) {
             <dt>crop</dt><dd>${formatBox(asset.cropBox)}</dd>
             <dt>slot</dt><dd>${formatSize(asset.slotSize)}</dd>
             <dt>target</dt><dd>${formatSize(asset.targetPixels)}</dd>
+            <dt>file</dt><dd>${formatMetrics(asset.metrics)}</dd>
           </dl>
           ${failures}
         </div>
@@ -208,6 +277,11 @@ function formatBox(box) {
 function formatSize(size) {
   if (!size) return "none"
   return `${size.width}x${size.height}`
+}
+
+function formatMetrics(metrics) {
+  if (!metrics) return "unknown"
+  return `${metrics.width}x${metrics.height}, ${metrics.format}, alpha=${metrics.hasAlpha ? "yes" : "no"}`
 }
 
 function escapeHtml(value) {

@@ -4,9 +4,9 @@ Three-screen iOS-style museum app prototype based on the provided reference imag
 
 ## Run
 
-```powershell
+```bat
 cd demo/artmuse-ios
-python -m http.server 4183 --bind 127.0.0.1
+node ..\..\scripts\serve-static.mjs . 4183 127.0.0.1
 ```
 
 Open:
@@ -29,8 +29,8 @@ http://127.0.0.1:4183/
 
 ## Validate
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File demo/artmuse-ios/validate.ps1
+```bat
+demo\artmuse-ios\validate.cmd
 ```
 
 ## Asset Notes

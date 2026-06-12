@@ -73,6 +73,7 @@ Assert-File "validate.cmd" | Out-Null
 Assert-File "scripts\install-local.cmd" | Out-Null
 Assert-File "scripts\sync-local.cmd" | Out-Null
 Assert-File "scripts\setup-fidelity-tools.cmd" | Out-Null
+Assert-File "scripts\serve-static.mjs" | Out-Null
 Assert-File "scripts\inspect-reference-image.mjs" | Out-Null
 Assert-File "scripts\reference-preflight-lib.mjs" | Out-Null
 Assert-File "scripts\validate-fidelity-plan.mjs" | Out-Null
@@ -139,6 +140,7 @@ Assert-File "assets\templates\vite-react-shadcn\src\types\page.ts" | Out-Null
 Assert-File "demo\moni-react-app\package.json" | Out-Null
 Assert-File "demo\moni-react-app\package-lock.json" | Out-Null
 Assert-File "demo\moni-react-app\validate.ps1" | Out-Null
+Assert-File "demo\moni-react-app\validate.cmd" | Out-Null
 Assert-File "demo\moni-react-app\src\App.tsx" | Out-Null
 Assert-File "demo\moni-react-app\src\assets\generated\moni-dashboard-hero.svg" | Out-Null
 Assert-File "demo\marble-note\imagegen-asset-plan.md" | Out-Null
@@ -154,6 +156,15 @@ $routingReference = Get-Content -LiteralPath (Join-Path $root "references\codex-
 $architectureReference = Get-Content -LiteralPath (Join-Path $root "references\frontend-architecture-contract.md") -Raw -Encoding UTF8
 $boxModelReference = Get-Content -LiteralPath (Join-Path $root "references\box-model-fidelity-workflow.md") -Raw -Encoding UTF8
 $iterationReference = Get-Content -LiteralPath (Join-Path $root "references\high-fidelity-iteration-tools.md") -Raw -Encoding UTF8
+$contactSheetScript = Get-Content -LiteralPath (Join-Path $root "scripts\build-asset-contact-sheet.mjs") -Raw -Encoding UTF8
+$scoreAssetScript = Get-Content -LiteralPath (Join-Path $root "scripts\score-asset.mjs") -Raw -Encoding UTF8
+$planScript = Get-Content -LiteralPath (Join-Path $root "scripts\validate-fidelity-plan.mjs") -Raw -Encoding UTF8
+$themeScript = Get-Content -LiteralPath (Join-Path $root "scripts\calibrate-theme.mjs") -Raw -Encoding UTF8
+$diagnoseScript = Get-Content -LiteralPath (Join-Path $root "scripts\diagnose-fidelity-diff.mjs") -Raw -Encoding UTF8
+$repairQueueScript = Get-Content -LiteralPath (Join-Path $root "scripts\build-repair-queue.mjs") -Raw -Encoding UTF8
+$loopScript = Get-Content -LiteralPath (Join-Path $root "scripts\run-fidelity-loop.mjs") -Raw -Encoding UTF8
+$marbleReadme = Get-Content -LiteralPath (Join-Path $root "demo\marble-note\README.md") -Raw -Encoding UTF8
+$artmuseReadme = Get-Content -LiteralPath (Join-Path $root "demo\artmuse-ios\README.md") -Raw -Encoding UTF8
 $rootPackagePath = Join-Path $root "package.json"
 $rootPackageLockPath = Join-Path $root "package-lock.json"
 $templatePackagePath = Join-Path $root "assets\templates\vite-react-shadcn\package.json"
@@ -254,6 +265,13 @@ Assert-True ($skill.Contains("build-asset-contact-sheet.mjs")) "SKILL.md should 
 Assert-True ($skill.Contains("diagnose-fidelity-diff.mjs")) "SKILL.md should require diff diagnosis"
 Assert-True ($skill.Contains("calibrate-theme.mjs")) "SKILL.md should require theme calibration"
 Assert-True ($skill.Contains("run-fidelity-loop.mjs")) "SKILL.md should require fidelity repair loop"
+Assert-True ($skill.Contains("--fail-on-review")) "SKILL.md should make asset contact sheet review a hard gate"
+Assert-True ($skill.Contains("--fail-on-reject")) "SKILL.md should make asset scoring a hard gate"
+Assert-True ($skill.Contains("--enforce-asset-acceptance")) "SKILL.md should enforce accepted assets before React integration"
+Assert-True ($skill.Contains("--assets assets.manifest.json")) "SKILL.md should pass assets to theme calibration"
+Assert-True ($skill.Contains("--diagnosis-report tmp/fidelity/diff-diagnosis.json")) "SKILL.md should pass diagnosis into repair queue"
+Assert-True ($skill.Contains("--max-iterations 6")) "SKILL.md should allow six focused fidelity iterations"
+Assert-True ($skill.Contains("source-1x-accepted")) "SKILL.md should document explicit 1x crop downgrade policy"
 Assert-True ($skill.Contains("PaymentOption") -and $skill.Contains("StatusTimeline") -and $skill.Contains("AgreementBar")) "SKILL.md should mention shared fidelity primitives"
 Assert-True ($skill.Contains("product-design:image-to-code")) "SKILL.md should mention Product Design reuse"
 Assert-True ($skill.Contains("Codex Browser")) "SKILL.md should mention Browser reuse"
@@ -297,6 +315,24 @@ Assert-True ($templateTsconfigApp.Contains('"moduleResolution": "Bundler"')) "Re
 Assert-True (-not ($templateTsconfigApp.Contains('"baseUrl"'))) "React template app tsconfig should avoid deprecated baseUrl fallback"
 Assert-True (-not ($templateTsconfig.Contains('"baseUrl"'))) "React template root tsconfig should avoid deprecated baseUrl fallback"
 
+Assert-True ($contactSheetScript.Contains('args["fail-on-review"]')) "Contact sheet should support fail-on-review"
+Assert-True ($contactSheetScript.Contains("targetPixels must be at least 2x slotSize")) "Contact sheet should enforce exact asset 2x target pixels"
+Assert-True ($contactSheetScript.Contains("requires alpha")) "Contact sheet should enforce alpha requirements"
+Assert-True ($contactSheetScript.Contains("backgroundMatched assets must record backgroundColor")) "Contact sheet should enforce background matched color"
+Assert-True ($scoreAssetScript.Contains('args["fail-on-reject"]')) "Asset scoring should support fail-on-reject"
+Assert-True ($scoreAssetScript.Contains("source-1x-accepted")) "Asset scoring should require explicit accepted 1x policy"
+Assert-True ($scoreAssetScript.Contains("alphaPolicy")) "Asset scoring should enforce alpha policy"
+Assert-True ($planScript.Contains("enforce-asset-acceptance")) "Plan validation should support enforcing accepted assets"
+Assert-True ($planScript.Contains("source-1x-accepted")) "Plan validation should require explicit accepted 1x policy"
+Assert-True ($themeScript.Contains("args.assets")) "Theme calibration should accept an assets manifest"
+Assert-True ($themeScript.Contains("readExcludedAssetBoxes")) "Theme calibration should exclude asset crop boxes"
+Assert-True ($themeScript.Contains("preferredAccent")) "Theme calibration should prefer warm accent colors when present"
+Assert-True ($diagnoseScript.Contains("isTypographyTarget")) "Diff diagnosis should classify critical text overflow as typography"
+Assert-True ($repairQueueScript.Contains("diagnosis-report")) "Repair queue should accept diagnosis report input"
+Assert-True ($repairQueueScript.Contains("isTypographyTarget")) "Repair queue should classify critical text overflow as typography"
+Assert-True ($loopScript.Contains('const maxIterations = Number(args["max-iterations"] ?? 6)')) "Fidelity loop should default to six iterations"
+Assert-True ($loopScript.Contains("--diagnosis-report tmp/fidelity/diff-diagnosis.json")) "Fidelity loop should suggest passing diagnosis into repair queue"
+
 $blockedRouterName = "Open" + "Router"
 $blockedApiKeyName = "OPENAI" + "_API_KEY"
 $blockedCommandName = "IMAGE" + "2_COMMAND"
@@ -334,7 +370,13 @@ Assert-True ($readme.Contains("prompt-component-refactor")) "README should inclu
 Assert-True ($readme.Contains("prompt-mobile-app")) "README should include mobile app prompt template"
 Assert-True ($readme.Contains("scripts\install-local.cmd")) "README should mention Windows cmd install wrapper"
 Assert-True ($readme.Contains("scripts\sync-local.cmd")) "README should mention Windows cmd sync wrapper"
+Assert-True ($readme.Contains("demo\moni-react-app\validate.cmd")) "README should mention React demo cmd validator"
+Assert-True ($quickStart.Contains("scripts\install-local.cmd")) "QUICK_START should mention Windows cmd install wrapper"
+Assert-True ($quickStart.Contains("scripts\sync-local.cmd")) "QUICK_START should mention Windows cmd sync wrapper"
+Assert-True ($marbleReadme.Contains("serve-static.mjs") -and -not $marbleReadme.Contains("python -m http.server")) "Marble demo README should use the Node static server"
+Assert-True ($artmuseReadme.Contains("serve-static.mjs") -and -not $artmuseReadme.Contains("python -m http.server")) "ArtMuse demo README should use the Node static server"
 Assert-True ($skill.Contains("Windows Script Execution Guard")) "SKILL should include Windows script execution guard"
+Assert-True ($skill.Contains("default user-facing entrypoints") -and $skill.Contains(".cmd")) "SKILL should make cmd wrappers the default Windows entrypoint"
 Assert-True ($skill.Contains("Foundation Memory Loop")) "SKILL should include foundation memory loop"
 Assert-True ($skill.Contains("generate-reuse-review.mjs")) "SKILL should require reuse review"
 Assert-True ($skill.Contains("promote-to-foundation.mjs")) "SKILL should mention reviewed foundation promotion"
@@ -464,6 +506,7 @@ foreach ($demo in $demoRoots) {
   Assert-File (Join-Path $demo "script.js") | Out-Null
   Assert-File (Join-Path $demo "README.md") | Out-Null
   Assert-File (Join-Path $demo "validate.ps1") | Out-Null
+  Assert-File (Join-Path $demo "validate.cmd") | Out-Null
 }
 
 $results = [System.Collections.Generic.List[object]]::new()
